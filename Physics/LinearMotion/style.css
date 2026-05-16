@@ -1,0 +1,40 @@
+body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+.canvas-container {
+    position: relative;
+    width: 100%;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+}
+canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+/* Range slider styling */
+input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+}
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px; width: 16px;
+    border-radius: 50%;
+    background: #3b82f6;
+    cursor: pointer;
+    margin-top: -6px;
+}
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%; height: 4px;
+    cursor: pointer;
+    background: #cbd5e1;
+    border-radius: 2px;
+}
+.tab-btn.active {
+    border-bottom: 2px solid #3b82f6;
+    color: #2563eb;
+    font-weight: 600;
+}

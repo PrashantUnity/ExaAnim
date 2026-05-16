@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="1D motion, vectors, and projectile motion interactives">
+    <title>Linear Motion — Interactive Physics</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- KaTeX for Mathematical Equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" 
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false}
+            ]
+        });">
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="text-slate-800 h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-slate-200 z-10 shrink-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-blue-600 text-white rounded flex items-center justify-center font-bold text-xl">
+                    P
+                </div>
+                <h1 class="text-xl font-bold text-slate-800">Linear Motion</h1>
+            </div>
+            <nav class="flex space-x-1 sm:space-x-4 overflow-x-auto">
+                <button onclick="switchTab('1d')" id="tab-1d" class="tab-btn active px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 whitespace-nowrap">1D Motion</button>
+                <button onclick="switchTab('vectors')" id="tab-vectors" class="tab-btn px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 whitespace-nowrap">Vectors</button>
+                <button onclick="switchTab('2d')" id="tab-2d" class="tab-btn px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 whitespace-nowrap">2D Motion</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50">
+        <div class="max-w-7xl mx-auto h-full">
+
+            <!-- SECTION: 1D MOTION -->
+            <div id="section-1d" class="section-container space-y-6" style="display: block;">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Theory Panel -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1">
+                        <h2 class="text-2xl font-bold mb-4 text-blue-700">Motion in a Straight Line</h2>
+                        <p class="text-sm text-slate-600 mb-4">Kinematics equations for constant acceleration:</p>
+                        <div class="bg-slate-50 p-4 rounded-lg mb-4 text-sm overflow-x-auto">
+                            $$ v = u + at $$
+                            $$ s = ut + \frac{1}{2}at^2 $$
+                            $$ v^2 = u^2 + 2as $$
+                        </div>
+                        <p class="text-sm text-slate-600 mb-4">Where:<br>
+                            $u$ = initial velocity, $v$ = final velocity,<br>
+                            $a$ = acceleration, $t$ = time, $s$ = displacement.
+                        </p>
+                        
+                        <div class="space-y-4 border-t pt-4">
+                            <h3 class="font-semibold text-slate-800">Controls</h3>
+                            <div>
+                                <label class="flex justify-between text-sm text-slate-600">
+                                    <span>Initial Velocity ($u$)</span> <span id="val-1d-u" class="font-mono text-blue-600">0 m/s</span>
+                                </label>
+                                <input type="range" id="slider-1d-u" min="-20" max="20" value="0" step="1" oninput="update1DInputs()">
+                            </div>
+                            <div>
+                                <label class="flex justify-between text-sm text-slate-600">
+                                    <span>Acceleration ($a$)</span> <span id="val-1d-a" class="font-mono text-blue-600">2 m/s²</span>
+                                </label>
+                                <input type="range" id="slider-1d-a" min="-5" max="5" value="2" step="0.5" oninput="update1DInputs()">
+                            </div>
+                            <div class="flex gap-2 pt-2">
+                                <button onclick="start1D()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition">Start</button>
+                                <button onclick="reset1D()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-2 rounded-lg font-medium transition">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Simulation Panel -->
+                    <div class="lg:col-span-2 flex flex-col gap-4">
+                        <div class="canvas-container bg-slate-900 border-none relative">
+                            <!-- Canvas logical size is fixed, CSS scales it perfectly to prevent mouse/crop issues -->
+                            <canvas id="canvas-1d" width="800" height="400" class="w-full h-auto block"></canvas>
+                            
+                            <!-- Realtime Stats Overlay -->
+                            <div class="absolute top-4 left-4 bg-black/60 text-white p-3 rounded text-sm font-mono backdrop-blur-sm">
+                                <div>Time (t): <span id="stat-1d-t" class="text-green-400">0.00</span> s</div>
+                                <div>Pos (s): <span id="stat-1d-s" class="text-blue-400">0.00</span> m</div>
+                                <div>Vel (v): <span id="stat-1d-v" class="text-red-400">0.00</span> m/s</div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-sm text-slate-600">
+                            <strong>Note:</strong> Observe how acceleration changes the rate at which the block's velocity increases. If acceleration is negative relative to velocity, it acts as retardation (braking).
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SECTION: VECTORS -->
+            <div id="section-vectors" class="section-container space-y-6" style="display: none;">
+                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1">
+                        <h2 class="text-2xl font-bold mb-4 text-blue-700">Vector Addition</h2>
+                        <p class="text-sm text-slate-600 mb-4">Resultant of two vectors $\vec{A}$ and $\vec{B}$:</p>
+                        <div class="bg-slate-50 p-4 rounded-lg mb-4 text-sm overflow-x-auto">
+                            $$ \vec{R} = \vec{A} + \vec{B} $$
+                            $$ |\vec{R}| = \sqrt{A^2 + B^2 + 2AB\cos\theta} $$
+                        </div>
+                        <p class="text-sm text-slate-600 mb-4">
+                            Drag the tips of Vector <span class="text-blue-600 font-bold">A</span> and Vector <span class="text-red-600 font-bold">B</span> on the grid to see their resultant <span class="text-green-600 font-bold">R</span>.
+                        </p>
+                        
+                        <div class="space-y-3 border-t pt-4 text-sm font-mono bg-slate-50 p-4 rounded">
+                            <div class="flex justify-between">
+                                <span class="text-blue-600 font-bold">Vector A:</span>
+                                <span id="vec-a-val">0i + 0j</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-red-600 font-bold">Vector B:</span>
+                                <span id="vec-b-val">0i + 0j</span>
+                            </div>
+                            <hr class="border-slate-300">
+                            <div class="flex justify-between font-bold">
+                                <span class="text-green-600">Resultant R:</span>
+                                <span id="vec-r-val">0i + 0j</span>
+                            </div>
+                            <div class="flex justify-between pt-2">
+                                <span class="text-slate-600 text-xs">Magnitude |R|:</span>
+                                <span id="vec-r-mag" class="text-xs">0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 text-xs">Angle ($\theta$ from x-axis):</span>
+                                <span id="vec-r-ang" class="text-xs">0.00°</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2">
+                        <div class="canvas-container bg-slate-50 cursor-crosshair relative" style="touch-action: none;">
+                            <canvas id="canvas-vectors" width="800" height="600" class="w-full h-auto block"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SECTION: 2D MOTION -->
+            <div id="section-2d" class="section-container space-y-6" style="display: none;">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1">
+                        <h2 class="text-2xl font-bold mb-4 text-blue-700">Projectile Motion</h2>
+                        <p class="text-sm text-slate-600 mb-2">Formulas for a projectile fired at angle $\theta$ with velocity $u$:</p>
+                        <div class="bg-slate-50 p-3 rounded-lg mb-4 text-xs overflow-x-auto space-y-2">
+                            <div>Time of Flight: $$ T = \frac{2u \sin\theta}{g} $$</div>
+                            <div>Max Height: $$ H = \frac{u^2 \sin^2\theta}{2g} $$</div>
+                            <div>Range: $$ R = \frac{u^2 \sin(2\theta)}{g} $$</div>
+                        </div>
+                        
+                        <div class="space-y-4 border-t pt-4">
+                            <h3 class="font-semibold text-slate-800">Parameters</h3>
+                            <div>
+                                <label class="flex justify-between text-sm text-slate-600">
+                                    <span>Velocity ($u$)</span> <span id="val-2d-u" class="font-mono text-blue-600">40 m/s</span>
+                                </label>
+                                <input type="range" id="slider-2d-u" min="10" max="80" value="40" step="1" oninput="update2DInputs()">
+                            </div>
+                            <div>
+                                <label class="flex justify-between text-sm text-slate-600">
+                                    <span>Angle ($\theta$)</span> <span id="val-2d-ang" class="font-mono text-blue-600">45°</span>
+                                </label>
+                                <input type="range" id="slider-2d-ang" min="0" max="90" value="45" step="1" oninput="update2DInputs()">
+                            </div>
+                            <div class="flex gap-2 pt-2">
+                                <button onclick="fireProjectile()" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-medium transition shadow-sm shadow-red-500/30">Fire Cannon</button>
+                                <button onclick="clearProjectiles()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-2 rounded-lg font-medium transition">Clear</button>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-4 bg-indigo-50 rounded-lg text-sm">
+                            <h4 class="font-bold text-indigo-800 mb-2">Theoretical Results:</h4>
+                            <div class="flex justify-between"><span class="text-indigo-600">Max Height:</span> <span id="theo-h" class="font-mono">--</span></div>
+                            <div class="flex justify-between"><span class="text-indigo-600">Range:</span> <span id="theo-r" class="font-mono">--</span></div>
+                            <div class="flex justify-between"><span class="text-indigo-600">Time:</span> <span id="theo-t" class="font-mono">--</span></div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2">
+                        <div class="canvas-container bg-sky-100 relative">
+                            <!-- Grid background for sky -->
+                            <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle, #000 1px, transparent 1px); background-size: 20px 20px;"></div>
+                            <canvas id="canvas-2d" width="800" height="600" class="w-full h-auto block relative z-10"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

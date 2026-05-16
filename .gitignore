@@ -1,0 +1,6 @@
+# File-based C# app build cache
+**/obj/
+**/bin/
+
+# Generated on every CI deploy (and locally for preview)
+site-index.json

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive physics demonstrations and simulations">
+  <title>ExaAnim</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gray-50: #fafafa;
+      --gray-100: #f4f4f5;
+      --gray-200: #e4e4e7;
+      --gray-300: #d4d4d8;
+      --gray-400: #a1a1aa;
+      --gray-500: #71717a;
+      --gray-600: #52525b;
+      --gray-700: #3f3f46;
+      --gray-800: #27272a;
+      --gray-900: #18181b;
+      --white: #ffffff;
+      --font: "DM Sans", system-ui, sans-serif;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.04);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--gray-100);
+      color: var(--gray-800);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .shell {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (min-width: 900px) {
+      .shell {
+        display: grid;
+        grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+      }
+    }
+
+    .panel-brand {
+      background: var(--gray-800);
+      color: var(--white);
+      padding: 1.25rem 1.25rem;
+      padding-left: max(1.25rem, env(safe-area-inset-left));
+      padding-right: max(1.25rem, env(safe-area-inset-right));
+      padding-top: max(1.25rem, env(safe-area-inset-top));
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+
+    .panel-brand .brand-inner {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      min-width: 0;
+      flex: 1;
+    }
+
+    @media (min-width: 900px) {
+      .panel-brand {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: space-between;
+        padding: clamp(2rem, 4vw, 3rem);
+        min-height: 100vh;
+        min-height: 100dvh;
+        position: sticky;
+        top: 0;
+      }
+
+      .panel-brand .brand-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+      }
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      border: 2px solid var(--gray-500);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.125rem;
+      letter-spacing: -0.02em;
+    }
+
+    @media (min-width: 900px) {
+      .brand-mark {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 2rem;
+      }
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (min-width: 480px) {
+      .brand-title { font-size: 1.5rem; white-space: normal; }
+    }
+
+    @media (min-width: 900px) {
+      .brand-title {
+        font-size: clamp(1.75rem, 2.5vw, 2.25rem);
+        margin-bottom: 0.75rem;
+      }
+    }
+
+    .brand-tagline {
+      font-size: 0.8125rem;
+      color: var(--gray-400);
+      line-height: 1.4;
+      display: none;
+    }
+
+    @media (min-width: 480px) {
+      .brand-tagline { display: block; }
+    }
+
+    @media (min-width: 900px) {
+      .brand-tagline {
+        font-size: 0.9375rem;
+        max-width: 22ch;
+      }
+    }
+
+    .brand-footer {
+      flex-shrink: 0;
+      font-size: 0.6875rem;
+      color: var(--gray-500);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    @media (min-width: 900px) {
+      .brand-footer {
+        margin-top: 2rem;
+        font-size: 0.75rem;
+      }
+    }
+
+    .panel-content {
+      background: var(--white);
+      flex: 1;
+      padding: 1.25rem;
+      padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+      padding-left: max(1.25rem, env(safe-area-inset-left));
+      padding-right: max(1.25rem, env(safe-area-inset-right));
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    @media (min-width: 600px) {
+      .panel-content { padding: 1.75rem 2rem; }
+    }
+
+    @media (min-width: 900px) {
+      .panel-content {
+        padding: clamp(2rem, 3vw, 3rem);
+        max-width: 720px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .panel-content { max-width: none; }
+    }
+
+    .content-header {
+      margin-bottom: 1.25rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    @media (min-width: 600px) {
+      .content-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+      }
+    }
+
+    .content-header h2 {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--gray-500);
+      margin-bottom: 0.35rem;
+    }
+
+    .content-header p {
+      font-size: 1.0625rem;
+      color: var(--gray-600);
+    }
+
+    .lesson-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.625rem;
+      width: 100%;
+    }
+
+    @media (min-width: 640px) {
+      .lesson-list { gap: 0.75rem; }
+    }
+
+    @media (min-width: 1100px) {
+      .lesson-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+      }
+    }
+
+    .lesson-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 1rem 1.125rem;
+      min-height: 44px;
+      transition: background .2s, border-color .2s, box-shadow .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    @media (min-width: 600px) {
+      .lesson-card { padding: 1.25rem 1.35rem; }
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .lesson-card {
+        transition: background .2s, border-color .2s, box-shadow .2s, transform .15s;
+      }
+      .lesson-card:hover {
+        background: var(--white);
+        border-color: var(--gray-300);
+        box-shadow: var(--shadow);
+        transform: translateY(-1px);
+      }
+      .lesson-card:hover .lesson-arrow {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .lesson-card:active {
+      background: var(--white);
+      border-color: var(--gray-300);
+    }
+
+    .lesson-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .lesson-title {
+      font-size: 1.0625rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+    }
+
+    .lesson-arrow {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      color: var(--gray-400);
+      opacity: 1;
+      transform: none;
+      transition: opacity .2s, transform .2s;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .lesson-arrow {
+        opacity: 0;
+        transform: translateX(-4px);
+      }
+    }
+
+    .lesson-desc {
+      margin-top: 0.5rem;
+      font-size: 0.8125rem;
+      color: var(--gray-500);
+      line-height: 1.55;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    @media (min-width: 600px) {
+      .lesson-desc { font-size: 0.875rem; max-width: 52ch; }
+    }
+
+    .lesson-path {
+      margin-top: 0.625rem;
+      font-size: 0.625rem;
+      font-weight: 500;
+      color: var(--gray-400);
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      word-break: break-all;
+    }
+
+    @media (min-width: 600px) {
+      .lesson-path {
+        margin-top: 0.75rem;
+        font-size: 0.6875rem;
+        word-break: normal;
+      }
+    }
+
+    .state-message {
+      color: var(--gray-500);
+      font-size: 0.9375rem;
+    }
+
+    .state-message.error {
+      color: var(--gray-700);
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      line-height: 1.6;
+    }
+
+    .state-message code {
+      font-size: 0.8125rem;
+      background: var(--gray-100);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-200) 50%, var(--gray-100) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s ease-in-out infinite;
+      border-radius: 6px;
+    }
+
+    .skeleton.wide { width: 70%; height: 1.25rem; margin-bottom: 1.5rem; }
+    .skeleton.card { height: 5.5rem; border-radius: var(--radius); margin-bottom: 0.75rem; }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .lesson-card,
+      .lesson-arrow,
+      .skeleton { transition: none; animation: none; }
+      .lesson-card:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell" id="app">
+    <aside class="panel-brand">
+      <div class="brand-inner">
+        <div class="brand-mark">E</div>
+        <div class="brand-text">
+          <h1 class="brand-title">ExaAnim</h1>
+          <p class="brand-tagline">Interactive physics demonstrations</p>
+        </div>
+      </div>
+      <p class="brand-footer">Physics · Interactive</p>
+    </aside>
+    <main class="panel-content">
+      <div class="content-header">
+        <h2>Lessons</h2>
+        <p>Loading catalog…</p>
+      </div>
+      <div class="skeleton wide"></div>
+      <div class="skeleton card"></div>
+    </main>
+  </div>
+  <script>
+    (async () => {
+      const app = document.getElementById('app');
+      const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      const arrow = '<svg class="lesson-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
+      function brandPanel(title, tagline) {
+        return '<aside class="panel-brand"><div class="brand-inner"><div class="brand-mark">E</div>' +
+          '<div class="brand-text"><h1 class="brand-title">' + esc(title) + '</h1>' +
+          '<p class="brand-tagline">' + esc(tagline) + '</p></div></div>' +
+          '<p class="brand-footer">Physics · Interactive</p></aside>';
+      }
+
+      function lessonsPanel(pages) {
+        if (!pages.length) {
+          return '<main class="panel-content"><div class="content-header"><h2>Lessons</h2>' +
+            '<p class="state-message">Nothing here yet.</p></div>' +
+            '<p class="state-message">Add a folder with <code>index.html</code> and push to main.</p></main>';
+        }
+        const cards = pages.map(p => {
+          let body = '<div class="lesson-top"><span class="lesson-title">' + esc(p.title) + '</span>' + arrow + '</div>';
+          if (p.description) body += '<p class="lesson-desc">' + esc(p.description) + '</p>';
+          body += '<p class="lesson-path">' + esc(p.path) + '/</p>';
+          return '<li><a class="lesson-card" href="' + esc(p.path + '/') + '">' + body + '</a></li>';
+        }).join('');
+        return '<main class="panel-content"><div class="content-header"><h2>Lessons</h2><p>' +
+          pages.length + ' interactive module' + (pages.length === 1 ? '' : 's') + '</p></div>' +
+          '<ul class="lesson-list">' + cards + '</ul></main>';
+      }
+
+      try {
+        const res = await fetch('site-index.json');
+        if (!res.ok) throw new Error('Catalog not found. GitHub Actions builds it on deploy. Locally: dotnet run GenerateSiteIndex.cs');
+        const data = await res.json();
+        document.title = data.title || 'ExaAnim';
+        app.innerHTML = brandPanel(data.title || 'ExaAnim', 'Interactive physics demonstrations') +
+          lessonsPanel(data.pages || []);
+      } catch (e) {
+        app.innerHTML = brandPanel('ExaAnim', 'Interactive physics demonstrations') +
+          '<main class="panel-content"><div class="content-header"><h2>Lessons</h2></div>' +
+          '<p class="state-message error">' + esc(e.message) + '</p></main>';
+      }
+    })();
+  </script>
+</body>
+</html>
