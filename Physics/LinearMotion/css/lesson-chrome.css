@@ -1,0 +1,100 @@
+/* Lesson home link, footnotes, tall sim column */
+.lesson-main {
+    position: relative;
+}
+
+.lesson-home-link {
+    position: fixed;
+    top: 0.65rem;
+    left: 0.65rem;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    transition: background 0.15s, color 0.15s;
+}
+
+.lesson-home-link:hover {
+    background: #f0fdfa;
+    color: var(--primary-hover);
+}
+
+.sidebar-goal {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed #e2e8f0;
+    line-height: 1.45;
+}
+
+.sim-section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    margin: 0 0 0.35rem;
+}
+
+.sim-footnote {
+    font-size: 0.8rem;
+    color: #64748b;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-card);
+    padding: 0.5rem 0.75rem;
+}
+
+.sim-footnote summary {
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    list-style: none;
+}
+
+.sim-footnote summary::-webkit-details-marker {
+    display: none;
+}
+
+.sim-footnote summary::before {
+    content: '▸ ';
+    font-size: 0.65rem;
+}
+
+.sim-footnote[open] summary::before {
+    content: '▾ ';
+}
+
+.sim-footnote p {
+    margin-top: 0.5rem;
+    line-height: 1.5;
+}
+
+
+.sim-main-grow {
+    min-height: calc(100vh - 1.5rem);
+}
+
+.sim-main-grow > .canvas-container {
+    flex: 1;
+    min-height: min(52vh, 520px);
+    display: flex;
+    flex-direction: column;
+}
+
+.sim-main-grow > .canvas-container canvas {
+    width: 100%;
+    height: auto;
+    flex: none;
+}

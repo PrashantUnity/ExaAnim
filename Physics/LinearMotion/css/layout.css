@@ -1,0 +1,28 @@
+/* Page shell and simulation grid */
+/* Full-width desktop layout */
+.page-shell {
+    width: 100%;
+    max-width: none;
+}
+
+.sim-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+@media (min-width: 1024px) {
+    .sim-layout {
+        grid-template-columns: minmax(300px, 24rem) minmax(0, 1fr);
+        align-items: stretch;
+        min-height: calc(100vh - 1.5rem);
+    }
+}
+
+@media (min-width: 1536px) {
+    .sim-layout {
+        grid-template-columns: minmax(320px, 28rem) minmax(0, 1fr);
+        gap: 1.75rem;
+    }
+}

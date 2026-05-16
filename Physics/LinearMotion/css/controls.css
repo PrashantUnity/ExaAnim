@@ -1,0 +1,118 @@
+/* Buttons, sliders, presets, utilities */
+.control-row {
+    margin-bottom: 0.85rem;
+}
+
+.control-row label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.8rem;
+    color: #475569;
+    margin-bottom: 0.35rem;
+}
+
+.control-row .control-value {
+    font-family: ui-monospace, monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--primary-hover);
+}
+
+.sidebar-btn-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.sidebar-btn-row .btn-action {
+    flex: 1;
+    padding: 0.5rem 0.35rem;
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: background 0.15s, opacity 0.15s;
+}
+
+.btn-action-primary {
+    background: var(--primary);
+    color: #fff;
+}
+
+.btn-action-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-action-secondary {
+    background: #475569;
+    color: #fff;
+}
+
+.btn-action-secondary:hover {
+    background: #334155;
+}
+
+.btn-action-muted {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.btn-action-muted:hover {
+    background: #cbd5e1;
+}
+
+.btn-action-danger {
+    background: #dc2626;
+    color: #fff;
+}
+
+.btn-action-danger:hover {
+    background: #b91c1c;
+}
+
+.btn-step {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #475569;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+}
+
+.btn-step:hover {
+    background: #f1f5f9;
+}
+.preset-btn {
+    flex: 1;
+    min-width: 5.5rem;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #334155;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    transition: background 0.15s;
+}
+.preset-btn:hover {
+    background: #e2e8f0;
+}
+.btn-primary {
+    background: var(--primary);
+    color: #fff;
+}
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+.text-primary { color: var(--primary-hover); }
+.text-primary-light { color: var(--primary-light); }
+.bg-brand-mark { background: var(--primary); }
+.panel-live {
+    background: var(--primary-muted-bg);
+    border-color: var(--primary-muted-border);
+}
+.panel-live-title { color: var(--primary-muted-text); }
+.panel-live-formula { color: #134e4a; }

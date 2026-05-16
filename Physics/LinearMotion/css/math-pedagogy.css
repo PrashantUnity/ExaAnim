@@ -1,0 +1,74 @@
+/* Equation badges, math panels, calculus layers */
+/* Math pedagogy */
+.math-map {
+    font-size: 0.75rem;
+    color: #475569;
+}
+.math-map table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.math-map th,
+.math-map td {
+    padding: 0.35rem 0.25rem;
+    text-align: left;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: top;
+}
+.math-map th {
+    font-weight: 600;
+    color: #64748b;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.graph-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem;
+    margin-bottom: 0.35rem;
+}
+.eq-badge {
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.12rem 0.35rem;
+    border-radius: 0.25rem;
+    flex-shrink: 0;
+}
+.eq-badge-linear {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+.eq-badge-quadratic {
+    background: #fce7f3;
+    color: #9d174d;
+}
+.eq-badge-constant {
+    background: #d1fae5;
+    color: #047857;
+}
+.calculus-layer.calculus-hidden {
+    display: none;
+}
+.calculus-layer {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: #f5f3ff;
+    border: 1px solid #ddd6fe;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    color: #4c1d95;
+}
+.calculus-layer .katex { font-size: 0.95em; }
+.live-at-t {
+    font-size: 0.65rem;
+    color: #64748b;
+    margin-bottom: 0.35rem;
+}
+.panel-live .panel-live-hint {
+    font-size: 0.65rem;
+    color: #64748b;
+    margin-top: 0.25rem;
+}
