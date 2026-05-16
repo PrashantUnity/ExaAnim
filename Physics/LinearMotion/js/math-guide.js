@@ -85,6 +85,9 @@ function drawGuideSamples() {
     for (const [id, type] of pairs) {
         const el = document.getElementById(id);
         if (!el) continue;
+        if (typeof fitCanvasToDisplay === 'function') {
+            fitCanvasToDisplay(el, 220 / 140);
+        }
         const ctx = el.getContext('2d');
         drawGuideSampleCurve(ctx, el.width, el.height, type);
     }
@@ -130,7 +133,7 @@ function checkGuideQuiz() {
 
     if (!picks.a || !picks.b || !picks.c) {
         fb.textContent = 'Select a type for each sample.';
-        fb.className = 'mt-3 text-sm font-medium text-slate-500';
+        fb.className = 'guide-quiz-feedback is-neutral';
         return;
     }
 
@@ -141,18 +144,49 @@ function checkGuideQuiz() {
 
     if (correct === 3) {
         fb.textContent = 'All correct! A = constant, B = linear, C = quadratic.';
-        fb.className = 'mt-3 text-sm font-medium text-emerald-700';
+        fb.className = 'guide-quiz-feedback is-success';
     } else {
         fb.textContent = `${correct}/3 correct. Reveal answers or try again — check the graph shape and highest power of t.`;
-        fb.className = 'mt-3 text-sm font-medium text-amber-700';
+        fb.className = 'guide-quiz-feedback is-warn';
     }
+}
+
+function initGuideTocSpy() {
+    const toc = document.querySelector('.guide-toc');
+    if (!toc || toc.dataset.spyBound) return;
+    toc.dataset.spyBound = '1';
+
+    const links = [...toc.querySelectorAll('a[href^="#guide-"]')];
+    const sections = links
+        .map((a) => document.querySelector(a.getAttribute('href')))
+        .filter(Boolean);
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            const visible = entries
+                .filter((e) => e.isIntersecting)
+                .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+            if (!visible.length) return;
+            const id = visible[0].target.id;
+            links.forEach((a) => {
+                a.classList.toggle('is-active', a.getAttribute('href') === `#${id}`);
+            });
+        },
+        { root: null, rootMargin: '-15% 0px -55% 0px', threshold: [0, 0.25, 0.5] }
+    );
+
+    sections.forEach((s) => observer.observe(s));
 }
 
 function initMathGuideTab() {
     drawGuideSamples();
     resetGuideQuizBadges();
+    initGuideTocSpy();
     const root = document.getElementById('section-guide');
-    if (root && typeof renderMathIn === 'function') {
+    if (root && typeof renderMathInElement === 'function') {
+        renderMathInElement(root);
+    } else if (root && typeof renderMathIn === 'function') {
         renderMathIn(root);
     }
 }

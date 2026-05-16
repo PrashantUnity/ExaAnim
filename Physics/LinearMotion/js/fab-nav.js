@@ -7,6 +7,9 @@ const FAB_LABELS = {
     guide: 'Guide'
 };
 
+const FAB_STORAGE_SEEN = 'exaanim-lm-fab-seen';
+const FAB_STORAGE_COACH = 'exaanim-lm-fab-coach';
+
 let fabMenuOpen = false;
 
 function initFabNav() {
@@ -17,8 +20,11 @@ function initFabNav() {
 
     if (!hub || !menu) return;
 
+    initFabCoachMark(hub);
+
     hub.addEventListener('click', (e) => {
         e.stopPropagation();
+        markFabSeen(hub);
         toggleFabMenu();
     });
 
@@ -52,8 +58,46 @@ function initFabNav() {
         if (e.key === 'Escape' && fabMenuOpen) toggleFabMenu(false);
     });
 
-    setFabActiveTab('1d');
+    const initial =
+        typeof parseTabFromHash === 'function' ? parseTabFromHash() || '1d' : '1d';
+    setFabActiveTab(initial);
     syncFabCalculusState();
+}
+
+function initFabCoachMark(hub) {
+    const coach = document.getElementById('fab-coach');
+    const dismiss = document.getElementById('fab-coach-dismiss');
+    const seen = sessionStorage.getItem(FAB_STORAGE_SEEN) === '1';
+    const coachDismissed = sessionStorage.getItem(FAB_STORAGE_COACH) === '1';
+
+    if (!seen && hub) {
+        hub.classList.add('fab-hub-pulse');
+    }
+
+    if (coach && !coachDismissed) {
+        coach.hidden = false;
+        coach.classList.add('is-visible');
+    }
+
+    if (dismiss && coach) {
+        dismiss.addEventListener('click', () => {
+            sessionStorage.setItem(FAB_STORAGE_COACH, '1');
+            coach.hidden = true;
+            coach.classList.remove('is-visible');
+        });
+    }
+}
+
+function markFabSeen(hub) {
+    if (sessionStorage.getItem(FAB_STORAGE_SEEN) === '1') return;
+    sessionStorage.setItem(FAB_STORAGE_SEEN, '1');
+    if (hub) hub.classList.remove('fab-hub-pulse');
+    const coach = document.getElementById('fab-coach');
+    if (coach) {
+        sessionStorage.setItem(FAB_STORAGE_COACH, '1');
+        coach.hidden = true;
+        coach.classList.remove('is-visible');
+    }
 }
 
 function toggleFabMenu(forceOpen) {
@@ -65,6 +109,8 @@ function toggleFabMenu(forceOpen) {
     if (!hub || !menu) return;
 
     fabMenuOpen = typeof forceOpen === 'boolean' ? forceOpen : !fabMenuOpen;
+
+    if (fabMenuOpen) markFabSeen(hub);
 
     hub.setAttribute('aria-expanded', fabMenuOpen ? 'true' : 'false');
     menu.classList.toggle('is-open', fabMenuOpen);

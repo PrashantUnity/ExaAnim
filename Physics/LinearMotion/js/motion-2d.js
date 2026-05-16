@@ -2,6 +2,17 @@
 const canvas2D = document.getElementById('canvas-2d');
 const ctx2D = canvas2D.getContext('2d');
 
+const CANVAS_2D_LAYOUT_REF = { w: 800, h: 600, originX: 50, originY: 550, ppm: 4 };
+
+function layout2DCanvas() {
+    const sx = canvas2D.width / CANVAS_2D_LAYOUT_REF.w;
+    const sy = canvas2D.height / CANVAS_2D_LAYOUT_REF.h;
+    const s = (sx + sy) / 2;
+    state2D.originX = Math.round(CANVAS_2D_LAYOUT_REF.originX * sx);
+    state2D.originY = Math.round(CANVAS_2D_LAYOUT_REF.originY * sy);
+    state2D.pixelsPerMeter = CANVAS_2D_LAYOUT_REF.ppm * s;
+}
+
 let state2D = {
     u: 40,
     theta: 45,
@@ -362,7 +373,11 @@ function draw2DGraphs() {
     ];
     for (const g of graphs) {
         const el = document.getElementById(g.id);
-        if (el) drawMotionGraph(el, { ...base, ...g });
+        if (!el) continue;
+        if (typeof fitCanvasToDisplay === 'function' && typeof GRAPH_ASPECT === 'number') {
+            fitCanvasToDisplay(el, GRAPH_ASPECT);
+        }
+        drawMotionGraph(el, { ...base, ...g });
     }
 }
 
@@ -455,5 +470,6 @@ function loop2D(timestamp) {
     }
 }
 
+if (typeof layout2DCanvas === 'function') layout2DCanvas();
 update2DInputs();
 update2DLiveFormulas();

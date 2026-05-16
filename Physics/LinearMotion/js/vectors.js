@@ -2,6 +2,17 @@
 const canvasV = document.getElementById('canvas-vectors');
 const ctxV = canvasV.getContext('2d');
 
+const VECTORS_LAYOUT_REF = { w: 800, h: 600, originX: 400, originY: 300, scale: 20 };
+
+function layoutVectorsCanvas() {
+    const sx = canvasV.width / VECTORS_LAYOUT_REF.w;
+    const sy = canvasV.height / VECTORS_LAYOUT_REF.h;
+    const s = (sx + sy) / 2;
+    stateV.originX = Math.round(VECTORS_LAYOUT_REF.originX * sx);
+    stateV.originY = Math.round(VECTORS_LAYOUT_REF.originY * sy);
+    stateV.scale = Math.max(8, Math.round(VECTORS_LAYOUT_REF.scale * s));
+}
+
 let stateV = {
     originX: 400,
     originY: 300,
@@ -218,4 +229,5 @@ canvasV.addEventListener('touchstart', handleDown, { passive: false });
 canvasV.addEventListener('touchmove', handleMove, { passive: false });
 window.addEventListener('touchend', handleUp);
 
+if (typeof layoutVectorsCanvas === 'function') layoutVectorsCanvas();
 drawVectors();

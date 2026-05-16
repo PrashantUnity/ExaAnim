@@ -21,6 +21,10 @@
         });">
     </script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -30,9 +34,12 @@
 
     <!-- Main Content Area -->
     <main class="lesson-main flex-1 overflow-y-auto min-h-0 p-2 sm:p-3 bg-slate-50">
+
+        <div id="lesson-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
         <div class="page-shell h-full w-full">
 
-            <!-- SECTION: 1D MOTION -->
+            <!-- SECTION: 1d -->
             <div id="section-1d" class="section-container space-y-6" style="display: block;">
                 <div class="sim-layout">
                     
@@ -41,6 +48,7 @@
                         <header class="sidebar-header">
                             <h2>Motion in a Straight Line</h2>
                             <p class="sidebar-lead">Constant acceleration — adjust sliders, then run the simulation.</p>
+                            <p class="sidebar-goal"><strong>Goal:</strong> Read s–t and v–t graphs and tie them to the equations.</p>
                         </header>
                         <div class="sidebar-controls sidebar-controls-top">
                             <p class="sidebar-controls-title">Controls</p>
@@ -113,23 +121,24 @@
                             </div>
                             </div>
                         </details>
-                        </div>
-
-                        <div class="panel-live border sidebar-live sidebar-live-footer text-xs font-mono space-y-1">
-                            <p id="live-1d-at-t" class="live-at-t">At t = 0.00 s</p>
-                            <p class="font-semibold panel-live-title mb-1">Substitute your values</p>
-                            <p id="live-formula-v" class="panel-live-formula">v = u + at → 0 = 0 + (2)(0)</p>
-                            <p id="live-formula-s" class="panel-live-formula">s = ut + ½at² → 0 = (0)(0) + ½(2)(0)²</p>
-                            <p id="live-formula-v2" class="panel-live-formula">v² = u² + 2as → 0 = 0 + 2(2)(0)</p>
-                            <p id="live-1d-graph-hint" class="panel-live-hint">On v–t: slope ≈ 2 m/s²</p>
+                        <details class="sidebar-fold sidebar-fold-live">
+                            <summary class="sidebar-fold-title">Substitute your values</summary>
+                            <div class="sidebar-fold-inner panel-live sidebar-live text-xs font-mono space-y-1">
+                                <p id="live-1d-at-t" class="live-at-t">At t = 0.00 s</p>
+                                <p id="live-formula-v" class="panel-live-formula">v = u + at → 0 = 0 + (2)(0)</p>
+                                <p id="live-formula-s" class="panel-live-formula">s = ut + ½at² → 0 = (0)(0) + ½(2)(0)²</p>
+                                <p id="live-formula-v2" class="panel-live-formula">v² = u² + 2as → 0 = 0 + 2(2)(0)</p>
+                                <p id="live-1d-graph-hint" class="panel-live-hint">On v–t: slope ≈ 2 m/s²</p>
+                            </div>
+                        </details>
                         </div>
                         </div>
                     </aside>
 
                     <!-- Simulation Panel -->
                     <div class="sim-main sim-main-grow flex flex-col gap-4 min-w-0">
-                        <div class="canvas-container bg-slate-900 border-none relative">
-                            <canvas id="canvas-1d" width="800" height="400" class="w-full h-auto block"></canvas>
+                        <div class="canvas-container bg-slate-900 border-none relative" data-aspect="2">
+                            <canvas id="canvas-1d" width="800" height="400" class="block"></canvas>
                             
                             <div class="absolute top-4 left-4 bg-black/60 text-white p-3 rounded text-sm font-mono backdrop-blur-sm">
                                 <div>Time (t): <span id="stat-1d-t" class="text-green-400">0.00</span> s</div>
@@ -146,49 +155,55 @@
                                     <p class="graph-label mb-0">Displacement s–t</p>
                                     <span class="eq-badge eq-badge-quadratic">Quadratic</span>
                                 </div>
-                                <canvas id="graph-st" width="260" height="160" class="w-full h-auto block"></canvas>
+                                <canvas id="graph-st" width="260" height="160" class="block"></canvas>
                             </div>
                             <div class="graph-panel">
                                 <div class="graph-label-row">
                                     <p class="graph-label mb-0">Velocity v–t</p>
                                     <span class="eq-badge eq-badge-linear">Linear</span>
                                 </div>
-                                <canvas id="graph-vt" width="260" height="160" class="w-full h-auto block"></canvas>
+                                <canvas id="graph-vt" width="260" height="160" class="block"></canvas>
                             </div>
                             <div class="graph-panel">
                                 <div class="graph-label-row">
                                     <p class="graph-label mb-0">Acceleration a–t</p>
                                     <span class="eq-badge eq-badge-constant">Constant</span>
                                 </div>
-                                <canvas id="graph-at" width="260" height="160" class="w-full h-auto block"></canvas>
+                                <canvas id="graph-at" width="260" height="160" class="block"></canvas>
                             </div>
                         </div>
 
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-sm text-slate-600">
-                            <strong>Tip:</strong> Red arrow = velocity, green = acceleration. The dashed vertical line on each graph marks the current time. Use <em>Pause</em> and <em>Step</em> to explore motion point by point.
-                        </div>
+                        <details class="sim-footnote">
+                            <summary>Hints</summary>
+                            <p>Red arrow = velocity, green = acceleration. The dashed vertical line on each graph marks the current time. Use <em>Pause</em> and <em>Step</em> to explore motion point by point.</p>
+                        </details>
                     </div>
 
                 </div>
             </div>
 
-            <!-- SECTION: VECTORS -->
+            <!-- SECTION: vectors -->
             <div id="section-vectors" class="section-container space-y-6" style="display: none;">
                  <div class="sim-layout">
                     
                     <aside class="sim-sidebar">
                         <header class="sidebar-header">
                             <h2>Vector Addition</h2>
-                            <p class="sidebar-lead">Drag vector tips on the canvas. Components update live below.</p>
+                            <p class="sidebar-lead">Drag vector tips on the canvas. Components update in the readout below.</p>
+                            <p class="sidebar-goal"><strong>Goal:</strong> Combine vectors with components and see |R| on the canvas.</p>
                         </header>
                         <div class="sidebar-controls sidebar-controls-top">
-                            <p class="sidebar-controls-title">Display</p>
+                            <p class="sidebar-controls-title">Controls</p>
                             <label class="sidebar-check">
                                 <input type="checkbox" id="vec-show-parallelogram" checked onchange="drawVectors()" class="rounded border-slate-300">
                                 Show parallelogram
                             </label>
-                            <p class="sidebar-controls-title">Readout</p>
-                            <div class="vec-readout">
+                        </div>
+                        <div class="sidebar-scroll">
+                        <div class="sidebar-body">
+                        <details class="sidebar-fold sidebar-fold-readout" open>
+                            <summary class="sidebar-fold-title">Live readout</summary>
+                            <div class="sidebar-fold-inner vec-readout">
                             <div class="flex justify-between">
                                 <span class="text-primary font-bold">Vector A:</span>
                                 <span id="vec-a-val">0i + 0j</span>
@@ -219,9 +234,7 @@
                                 <span id="vec-r-ang" class="text-xs">0.00°</span>
                             </div>
                             </div>
-                        </div>
-                        <div class="sidebar-scroll">
-                        <div class="sidebar-body">
+                        </details>
                         <details class="sidebar-fold" open>
                             <summary class="sidebar-fold-title">Key equations</summary>
                             <div class="sidebar-fold-inner">
@@ -247,22 +260,25 @@
                             </div>
                             </div>
                         </details>
-                        </div>
-                        <div class="panel-live border sidebar-live sidebar-live-footer text-xs font-mono space-y-1">
-                            <p class="font-semibold panel-live-title mb-1">Substitute components</p>
-                            <p id="live-vec-rx" class="panel-live-formula">R_x = A_x + B_x → …</p>
-                            <p id="live-vec-ry" class="panel-live-formula">R_y = A_y + B_y → …</p>
-                            <p id="live-vec-cos" class="panel-live-formula panel-live-hint">Angle between A and B: …</p>
+                        <details class="sidebar-fold sidebar-fold-live">
+                            <summary class="sidebar-fold-title">Substitute components</summary>
+                            <div class="sidebar-fold-inner panel-live sidebar-live text-xs font-mono space-y-1">
+                                <p id="live-vec-rx" class="panel-live-formula">R_x = A_x + B_x → …</p>
+                                <p id="live-vec-ry" class="panel-live-formula">R_y = A_y + B_y → …</p>
+                                <p id="live-vec-cos" class="panel-live-formula panel-live-hint">Angle between A and B: …</p>
+                            </div>
+                        </details>
                         </div>
                         </div>
                     </aside>
                     <div class="sim-main sim-main-grow flex flex-col gap-4 min-w-0">
-                        <div class="canvas-container bg-slate-50 cursor-crosshair relative" style="touch-action: none;">
-                            <canvas id="canvas-vectors" width="800" height="600" class="w-full h-auto block"></canvas>
+                        <div class="canvas-container bg-slate-50 cursor-crosshair relative" data-aspect="4/3" style="touch-action: none;">
+                            <canvas id="canvas-vectors" width="800" height="600" class="block"></canvas>
                         </div>
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-sm text-slate-600">
-                            <strong>Tip:</strong> Blue and red dashed lines project each vector onto the x- and y-axes. The green vector R is the diagonal of the parallelogram (or the closing side of the triangle).
-                        </div>
+                        <details class="sim-footnote">
+                            <summary>Hints</summary>
+                            <p>Blue and red dashed lines project each vector onto the x- and y-axes. The green vector R is the diagonal of the parallelogram (or the closing side of the triangle).</p>
+                        </details>
                     </div>
 
                 </div>
@@ -276,9 +292,10 @@
                         <header class="sidebar-header">
                             <h2>Projectile Motion</h2>
                             <p class="sidebar-lead">Set speed and angle, then fire. Compare live values to theory.</p>
+                            <p class="sidebar-goal"><strong>Goal:</strong> Connect linear $x(t)$ and quadratic $y(t)$ to projectile graphs.</p>
                         </header>
                         <div class="sidebar-controls sidebar-controls-top">
-                            <p class="sidebar-controls-title">Parameters</p>
+                            <p class="sidebar-controls-title">Controls</p>
                             <div class="control-row">
                                 <label>
                                     <span>Velocity ($u$)</span>
@@ -297,15 +314,17 @@
                                 <button type="button" onclick="fireProjectile()" class="btn-action btn-action-danger">Fire</button>
                                 <button type="button" onclick="clearProjectiles()" class="btn-action btn-action-muted">Clear</button>
                             </div>
-                            <div class="theo-results">
-                            <h4>Theoretical results</h4>
-                            <div class="theo-row"><span>Max height</span> <span id="theo-h" class="font-mono">--</span></div>
-                            <div class="theo-row"><span>Range</span> <span id="theo-r" class="font-mono">--</span></div>
-                            <div class="theo-row"><span>Time</span> <span id="theo-t" class="font-mono">--</span></div>
-                            </div>
                         </div>
                         <div class="sidebar-scroll">
                         <div class="sidebar-body">
+                        <details class="sidebar-fold sidebar-fold-theo" open>
+                            <summary class="sidebar-fold-title">Theoretical results</summary>
+                            <div class="sidebar-fold-inner theo-results-inner">
+                                <div class="theo-row"><span>Max height</span> <span id="theo-h" class="theo-val">--</span></div>
+                                <div class="theo-row"><span>Range</span> <span id="theo-r" class="theo-val">--</span></div>
+                                <div class="theo-row"><span>Time of flight</span> <span id="theo-t" class="theo-val">--</span></div>
+                            </div>
+                        </details>
                         <details class="sidebar-fold" open>
                             <summary class="sidebar-fold-title">Key equations</summary>
                             <div class="sidebar-fold-inner">
@@ -339,21 +358,23 @@
                             </div>
                             </div>
                         </details>
-                        </div>
-                        <div class="panel-live border sidebar-live sidebar-live-footer text-xs font-mono space-y-1">
-                            <p id="live-2d-at-t" class="live-at-t">At t = 0.00 s (preview)</p>
-                            <p class="font-semibold panel-live-title mb-1">Substitute your values</p>
-                            <p id="live-2d-x" class="panel-live-formula">x = (u cos θ)t → …</p>
-                            <p id="live-2d-y" class="panel-live-formula">y = (u sin θ)t − ½gt² → …</p>
-                            <p id="live-2d-vy" class="panel-live-formula">v_y = u sin θ − gt → …</p>
-                            <p id="live-2d-range-check" class="panel-live-hint">Range check: …</p>
+                        <details class="sidebar-fold sidebar-fold-live">
+                            <summary class="sidebar-fold-title">Substitute your values</summary>
+                            <div class="sidebar-fold-inner panel-live sidebar-live text-xs font-mono space-y-1">
+                                <p id="live-2d-at-t" class="live-at-t">At t = 0.00 s (preview)</p>
+                                <p id="live-2d-x" class="panel-live-formula">x = (u cos θ)t → …</p>
+                                <p id="live-2d-y" class="panel-live-formula">y = (u sin θ)t − ½gt² → …</p>
+                                <p id="live-2d-vy" class="panel-live-formula">v_y = u sin θ − gt → …</p>
+                                <p id="live-2d-range-check" class="panel-live-hint">Range check: …</p>
+                            </div>
+                        </details>
                         </div>
                         </div>
                     </aside>
                     <div class="sim-main sim-main-grow flex flex-col gap-4 min-w-0">
-                        <div class="canvas-container bg-sky-100 relative">
+                        <div class="canvas-container bg-sky-100 relative" data-aspect="4/3">
                             <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle, #000 1px, transparent 1px); background-size: 20px 20px;"></div>
-                            <canvas id="canvas-2d" width="800" height="600" class="w-full h-auto block relative z-10"></canvas>
+                            <canvas id="canvas-2d" width="800" height="600" class="block relative z-10"></canvas>
                             <div id="overlay-2d" class="absolute top-4 right-4 bg-black/60 text-white p-3 rounded text-sm font-mono backdrop-blur-sm z-20 hidden">
                                 <div>t: <span id="stat-2d-t" class="text-green-400">0.00</span> s</div>
                                 <div>x: <span id="stat-2d-x" class="text-primary-light">0.00</span> m</div>
@@ -362,51 +383,67 @@
                                 <div>v_y: <span id="stat-2d-vy" class="text-red-400">0.00</span> m/s</div>
                             </div>
                         </div>
+                        <p class="sim-section-label">Graphs</p>
                         <div class="graph-row grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div class="graph-panel">
                                 <div class="graph-label-row">
                                     <p class="graph-label mb-0">Height y–t</p>
                                     <span class="eq-badge eq-badge-quadratic">Quadratic</span>
                                 </div>
-                                <canvas id="graph-2d-yt" width="260" height="160" class="w-full h-auto block"></canvas>
+                                <canvas id="graph-2d-yt" width="260" height="160" class="block"></canvas>
                             </div>
                             <div class="graph-panel">
                                 <div class="graph-label-row">
                                     <p class="graph-label mb-0">Range x–t</p>
                                     <span class="eq-badge eq-badge-linear">Linear</span>
                                 </div>
-                                <canvas id="graph-2d-xt" width="260" height="160" class="w-full h-auto block"></canvas>
+                                <canvas id="graph-2d-xt" width="260" height="160" class="block"></canvas>
                             </div>
                             <div class="graph-panel">
                                 <div class="graph-label-row">
                                     <p class="graph-label mb-0">Vertical v_y–t</p>
                                     <span class="eq-badge eq-badge-linear">Linear</span>
                                 </div>
-                                <canvas id="graph-2d-vyt" width="260" height="160" class="w-full h-auto block"></canvas>
+                                <canvas id="graph-2d-vyt" width="260" height="160" class="block"></canvas>
                             </div>
                         </div>
 
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-sm text-slate-600">
-                            <strong>Tip:</strong> Graphs track the latest shot (or the predicted path before you fire). y–t is a parabola; x–t is linear; v_y–t decreases at slope −g. v_x stays constant (not shown).
-                        </div>
+                        <details class="sim-footnote">
+                            <summary>Hints</summary>
+                            <p>Graphs track the latest shot (or the predicted path before you fire). y–t is a parabola; x–t is linear; v_y–t decreases at slope −g. v_x stays constant (not shown).</p>
+                        </details>
                     </div>
 
                 </div>
             </div>
 
             <!-- SECTION: MATH GUIDE -->
-            <div id="section-guide" class="section-container space-y-6" style="display: none;">
-                <div class="guide-page w-full space-y-6" data-static-math>
+            <div id="section-guide" class="section-container" style="display: none;">
+                <div class="guide-page" data-static-math>
 
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 guide-span-full">
-                        <h2 class="text-2xl font-bold mb-2 text-primary">Equations, graphs &amp; derivations</h2>
-                        <p class="text-sm text-slate-600">Learn how to <strong>recognise</strong> linear, quadratic, and constant relationships from equations and graphs — then practise on the simulation tabs.</p>
-                    </div>
+                    <header id="guide-hero" class="guide-hero guide-span-full">
+                        <p class="guide-hero-eyebrow">Math Guide</p>
+                        <h2 id="guide-hero-heading" class="guide-hero-title" tabindex="-1">Equations, graphs &amp; derivations</h2>
+                        <p class="guide-hero-lead">Recognise <strong>constant</strong>, <strong>linear</strong>, and <strong>quadratic</strong> relationships from equations and graph shapes — then test yourself in the simulators.</p>
+                        <p class="guide-hero-hint">Open the <strong>☰ menu</strong> (bottom-right) to switch between Guide, 1D, Vectors, and 2D.</p>
+                    </header>
 
-                    <div class="guide-card">
-                        <h3 class="guide-heading">1. Identify from the equation</h3>
+                    <nav class="guide-toc-wrap guide-span-full" aria-label="On this page">
+                        <p class="guide-toc-label">Jump to</p>
+                        <ul class="guide-toc">
+                            <li><a href="#guide-identify-eq"><span class="guide-toc-num">1</span> Equations</a></li>
+                            <li><a href="#guide-identify-graph"><span class="guide-toc-num">2</span> Graphs</a></li>
+                            <li><a href="#guide-practise"><span class="guide-toc-num">3</span> Practise</a></li>
+                            <li><a href="#guide-chain"><span class="guide-toc-num">4</span> Graph chain</a></li>
+                            <li><a href="#guide-projectile"><span class="guide-toc-num">5</span> Projectile</a></li>
+                            <li><a href="#guide-derivations"><span class="guide-toc-num">6</span> Derivations</a></li>
+                        </ul>
+                    </nav>
+
+                    <div id="guide-identify-eq" class="guide-card">
+                        <h3 class="guide-heading"><span class="guide-step-num">1</span> Identify from the equation</h3>
                         <p class="guide-text">Look at the highest power of time $t$ (or the variable on the horizontal axis).</p>
-                        <div class="overflow-x-auto">
+                        <div class="guide-table-wrap">
                             <table class="guide-table">
                                 <thead>
                                     <tr><th>Form</th><th>Example (physics)</th><th>Nature</th><th>Graph (y vs t)</th></tr>
@@ -442,56 +479,57 @@
                         <p class="guide-tip"><strong>Tip:</strong> “Linear in $t$” means $t$ appears only to the first power. If $t^2$ appears, the graph vs $t$ is usually a parabola.</p>
                     </div>
 
-                    <div class="guide-card">
-                        <h3 class="guide-heading">2. Identify from the graph</h3>
-                        <p class="guide-text mb-4">Match the shape to the type. Same idea for $s$–$t$, $v$–$t$, $x$–$t$, etc.</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div id="guide-identify-graph" class="guide-card">
+                        <h3 class="guide-heading"><span class="guide-step-num">2</span> Identify from the graph</h3>
+                        <p class="guide-text">Match the shape to the type. Same idea for $s$–$t$, $v$–$t$, $x$–$t$, etc.</p>
+                        <div class="guide-samples">
                             <div class="guide-sample">
                                 <div class="graph-label-row">
-                                    <span class="text-xs font-semibold text-slate-600">Sample A</span>
+                                    <span class="guide-sample-label">Sample A</span>
                                     <span class="eq-badge eq-badge-constant" id="guide-badge-a">?</span>
                                 </div>
-                                <canvas id="guide-canvas-const" width="220" height="140" class="w-full h-auto block rounded border border-slate-200"></canvas>
+                                <canvas id="guide-canvas-const" width="220" height="140" class="block rounded border border-slate-200"></canvas>
                             </div>
                             <div class="guide-sample">
                                 <div class="graph-label-row">
-                                    <span class="text-xs font-semibold text-slate-600">Sample B</span>
+                                    <span class="guide-sample-label">Sample B</span>
                                     <span class="eq-badge eq-badge-linear" id="guide-badge-b">?</span>
                                 </div>
-                                <canvas id="guide-canvas-linear" width="220" height="140" class="w-full h-auto block rounded border border-slate-200"></canvas>
+                                <canvas id="guide-canvas-linear" width="220" height="140" class="block rounded border border-slate-200"></canvas>
                             </div>
                             <div class="guide-sample">
                                 <div class="graph-label-row">
-                                    <span class="text-xs font-semibold text-slate-600">Sample C</span>
+                                    <span class="guide-sample-label">Sample C</span>
                                     <span class="eq-badge eq-badge-quadratic" id="guide-badge-c">?</span>
                                 </div>
-                                <canvas id="guide-canvas-quad" width="220" height="140" class="w-full h-auto block rounded border border-slate-200"></canvas>
+                                <canvas id="guide-canvas-quad" width="220" height="140" class="block"></canvas>
                             </div>
                         </div>
-                        <div class="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
-                            <p class="text-sm font-semibold text-slate-700 mb-2">Quick check — what type is each sample?</p>
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                                <div>
-                                    <label class="text-slate-600 block mb-1">Sample A</label>
-                                    <select id="guide-quiz-a" class="guide-select w-full" onchange="checkGuideQuiz()">
+                        <div class="guide-quiz-panel">
+                            <p class="guide-quiz-title">Quick check</p>
+                            <p class="guide-quiz-desc">Pick a type for each graph, then reveal answers.</p>
+                            <div class="guide-quiz-grid">
+                                <div class="guide-quiz-field">
+                                    <label>Sample A</label>
+                                    <select id="guide-quiz-a" class="guide-select" onchange="checkGuideQuiz()">
                                         <option value="">Choose…</option>
                                         <option value="constant">Constant</option>
                                         <option value="linear">Linear</option>
                                         <option value="quadratic">Quadratic</option>
                                     </select>
                                 </div>
-                                <div>
-                                    <label class="text-slate-600 block mb-1">Sample B</label>
-                                    <select id="guide-quiz-b" class="guide-select w-full" onchange="checkGuideQuiz()">
+                                <div class="guide-quiz-field">
+                                    <label>Sample B</label>
+                                    <select id="guide-quiz-b" class="guide-select" onchange="checkGuideQuiz()">
                                         <option value="">Choose…</option>
                                         <option value="constant">Constant</option>
                                         <option value="linear">Linear</option>
                                         <option value="quadratic">Quadratic</option>
                                     </select>
                                 </div>
-                                <div>
-                                    <label class="text-slate-600 block mb-1">Sample C</label>
-                                    <select id="guide-quiz-c" class="guide-select w-full" onchange="checkGuideQuiz()">
+                                <div class="guide-quiz-field">
+                                    <label>Sample C</label>
+                                    <select id="guide-quiz-c" class="guide-select" onchange="checkGuideQuiz()">
                                         <option value="">Choose…</option>
                                         <option value="constant">Constant</option>
                                         <option value="linear">Linear</option>
@@ -499,15 +537,34 @@
                                     </select>
                                 </div>
                             </div>
-                            <p id="guide-quiz-feedback" class="mt-3 text-sm font-medium"></p>
-                            <button type="button" onclick="revealGuideAnswers()" class="mt-2 text-xs text-primary hover:underline">Reveal answers</button>
+                            <p id="guide-quiz-feedback" class="guide-quiz-feedback"></p>
+                            <button type="button" onclick="revealGuideAnswers()" class="guide-quiz-reveal">Reveal answers</button>
                         </div>
                     </div>
 
-                    <div class="guide-card guide-span-full">
-                        <h3 class="guide-heading">3. Graph chain (constant acceleration, 1D)</h3>
+                    <div id="guide-practise" class="guide-card guide-card-practise guide-span-full">
+                        <h3 class="guide-heading"><span class="guide-step-num">3</span> Practise in the simulators</h3>
+                        <p class="guide-text">Apply what you learned — each simulator highlights different graph types.</p>
+                        <div class="guide-practise-grid">
+                            <button type="button" class="guide-practise-card" onclick="switchTab('1d')">
+                                <span class="guide-practise-card-title">1D Motion</span>
+                                <span class="guide-practise-card-desc">s–t, v–t graphs · live substitution</span>
+                            </button>
+                            <button type="button" class="guide-practise-card" onclick="switchTab('vectors')">
+                                <span class="guide-practise-card-title">Vectors</span>
+                                <span class="guide-practise-card-desc">Components vs magnitude</span>
+                            </button>
+                            <button type="button" class="guide-practise-card" onclick="switchTab('2d')">
+                                <span class="guide-practise-card-title">2D Motion</span>
+                                <span class="guide-practise-card-desc">Linear $x(t)$ · quadratic $y(t)$</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="guide-chain" class="guide-card guide-span-full">
+                        <h3 class="guide-heading"><span class="guide-step-num">4</span> Graph chain (constant acceleration, 1D)</h3>
                         <p class="guide-text">From constant $a$, each graph links to the next by slope or area.</p>
-                        <div class="guide-chain overflow-x-auto text-sm">
+                        <div class="guide-chain">
                             <div class="guide-chain-step">
                                 <span class="eq-badge eq-badge-constant">a–t</span>
                                 <p>$a$ flat</p>
@@ -526,23 +583,23 @@
                         <p class="guide-tip calculus-layer calculus-hidden">$a = \dfrac{dv}{dt}$, $v = \dfrac{ds}{dt}$, $s = \int_0^t v\,d\tau$.</p>
                     </div>
 
-                    <div class="guide-card guide-span-full">
-                        <h3 class="guide-heading">4. Projectile: two equations</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                            <div class="p-3 bg-blue-50 rounded-lg border border-blue-100">
+                    <div id="guide-projectile" class="guide-card guide-span-full">
+                        <h3 class="guide-heading"><span class="guide-step-num">5</span> Projectile: two equations</h3>
+                        <div class="guide-split">
+                            <div class="guide-split-card guide-split-linear">
                                 <span class="eq-badge eq-badge-linear">Linear in t</span>
-                                <p class="mt-2">$x = (u\cos\theta)\,t$, &nbsp; $v_x = u\cos\theta$</p>
+                                <p class="guide-split-eq">$x = (u\cos\theta)\,t$, &nbsp; $v_x = u\cos\theta$</p>
                             </div>
-                            <div class="p-3 bg-pink-50 rounded-lg border border-pink-100">
+                            <div class="guide-split-card guide-split-quad">
                                 <span class="eq-badge eq-badge-quadratic">Quadratic in t</span>
-                                <p class="mt-2">$y = (u\sin\theta)\,t - \frac{1}{2}gt^2$</p>
+                                <p class="guide-split-eq">$y = (u\sin\theta)\,t - \frac{1}{2}gt^2$</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="guide-card guide-span-full">
-                        <h3 class="guide-heading">5. Derivations</h3>
-                        <p class="guide-text mb-3">Constant $a$. Expand each card for steps.</p>
+                    <div id="guide-derivations" class="guide-card guide-span-full">
+                        <h3 class="guide-heading"><span class="guide-step-num">6</span> Derivations</h3>
+                        <p class="guide-text">Constant $a$. Expand each card for steps.</p>
 
                         <details class="derivation-block">
                             <summary>$v = u + at$</summary>
@@ -575,15 +632,6 @@
                         </details>
                     </div>
 
-                    <div class="guide-card guide-span-full bg-teal-50 border-teal-100">
-                        <h3 class="guide-heading text-teal-900">Practise in the simulators</h3>
-                        <ul class="guide-text list-disc pl-5 space-y-1">
-                            <li><button type="button" onclick="switchTab('1d')" class="text-primary font-medium hover:underline">1D Motion</button> — s–t, v–t, live substitution</li>
-                            <li><button type="button" onclick="switchTab('vectors')" class="text-primary font-medium hover:underline">Vectors</button> — components vs magnitude</li>
-                            <li><button type="button" onclick="switchTab('2d')" class="text-primary font-medium hover:underline">2D Motion</button> — linear $x(t)$, quadratic $y(t)$</li>
-                        </ul>
-                    </div>
-
                 </div>
             </div>
 
@@ -591,6 +639,11 @@
     </main>
 
     <a href="../../index.html" class="lesson-home-link" title="Back to ExaAnim" aria-label="Back to ExaAnim">←</a>
+
+    <div id="fab-coach" class="fab-coach" role="status" hidden>
+        <p>Open the menu to switch between Guide, 1D, Vectors, and 2D.</p>
+        <button type="button" class="fab-coach-dismiss" id="fab-coach-dismiss">Got it</button>
+    </div>
 
     <button type="button" class="fab-backdrop" id="fab-backdrop" aria-hidden="true" tabindex="-1"></button>
     <nav class="fab-nav" id="fab-nav" aria-label="Lesson sections">

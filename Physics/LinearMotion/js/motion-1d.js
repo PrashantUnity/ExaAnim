@@ -26,7 +26,11 @@ function draw1DGraphs() {
     ];
     for (const g of graphs) {
         const el = document.getElementById(g.id);
-        if (el) drawMotionGraph(el, { ...base, ...g });
+        if (!el) continue;
+        if (typeof fitCanvasToDisplay === 'function' && typeof GRAPH_ASPECT === 'number') {
+            fitCanvasToDisplay(el, GRAPH_ASPECT);
+        }
+        drawMotionGraph(el, { ...base, ...g });
     }
 }
 

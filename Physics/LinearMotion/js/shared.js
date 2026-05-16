@@ -322,3 +322,131 @@ function drawVectorArrow(ctx, fromX, fromY, toX, toY, color, label, dashed) {
         ctx.fillText(label, toX + 8, toY - 8);
     }
 }
+
+/** Match canvas bitmap size to its container so CSS never stretches the plot. */
+function fitCanvasToDisplay(canvas, aspectRatio) {
+    const container =
+        canvas.closest('.canvas-container') ||
+        canvas.closest('.graph-panel') ||
+        canvas.parentElement;
+    if (!container || !aspectRatio || aspectRatio <= 0) return false;
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = container.getBoundingClientRect();
+    const cssW = Math.max(1, Math.floor(rect.width));
+    const cssH = Math.max(1, Math.round(cssW / aspectRatio));
+    const bw = Math.max(1, Math.round(cssW * dpr));
+    const bh = Math.max(1, Math.round(cssH * dpr));
+    const changed = canvas.width !== bw || canvas.height !== bh;
+
+    canvas.style.width = `${cssW}px`;
+    canvas.style.height = `${cssH}px`;
+    canvas.style.maxWidth = '100%';
+    canvas.style.flex = 'none';
+    canvas.width = bw;
+    canvas.height = bh;
+
+    return changed;
+}
+
+const GRAPH_ASPECT = 260 / 160;
+
+function refreshVisibleGraphCanvases() {
+    const s1 = document.getElementById('section-1d');
+    const s2 = document.getElementById('section-2d');
+    if (s1 && s1.style.display !== 'none' && typeof draw1DGraphs === 'function') {
+        draw1DGraphs();
+    }
+    if (s2 && s2.style.display !== 'none' && typeof draw2DGraphs === 'function') {
+        draw2DGraphs();
+    }
+}
+
+function refitLessonCanvasesForTab(tabId) {
+    requestAnimationFrame(() => {
+        if (tabId === '1d') {
+            const c = document.getElementById('canvas-1d');
+            if (c) {
+                fitCanvasToDisplay(c, 2);
+                if (typeof draw1D === 'function') draw1D();
+            }
+            ['graph-st', 'graph-vt', 'graph-at'].forEach((id) => {
+                const g = document.getElementById(id);
+                if (g) fitCanvasToDisplay(g, GRAPH_ASPECT);
+            });
+            if (typeof draw1DGraphs === 'function') draw1DGraphs();
+        } else if (tabId === 'vectors') {
+            const c = document.getElementById('canvas-vectors');
+            if (c) {
+                fitCanvasToDisplay(c, 4 / 3);
+                if (typeof layoutVectorsCanvas === 'function') layoutVectorsCanvas();
+                if (typeof drawVectors === 'function') drawVectors();
+            }
+        } else if (tabId === '2d') {
+            const c = document.getElementById('canvas-2d');
+            if (c) {
+                fitCanvasToDisplay(c, 4 / 3);
+                if (typeof layout2DCanvas === 'function') layout2DCanvas();
+                if (typeof draw2DEnvironment === 'function') draw2DEnvironment();
+            }
+            ['graph-2d-yt', 'graph-2d-xt', 'graph-2d-vyt'].forEach((id) => {
+                const g = document.getElementById(id);
+                if (g) fitCanvasToDisplay(g, GRAPH_ASPECT);
+            });
+            if (typeof draw2DGraphs === 'function') draw2DGraphs();
+        } else if (tabId === 'guide' && typeof drawGuideSamples === 'function') {
+            drawGuideSamples();
+        }
+    });
+}
+
+function initLessonCanvases() {
+    const graphIds = [
+        'graph-st', 'graph-vt', 'graph-at',
+        'graph-2d-yt', 'graph-2d-xt', 'graph-2d-vyt'
+    ];
+
+    const observe = (canvas, aspect, onResize) => {
+        if (!canvas) return;
+        const container =
+            canvas.closest('.canvas-container') ||
+            canvas.closest('.graph-panel') ||
+            canvas.parentElement;
+        if (!container) return;
+
+        const run = () => {
+            fitCanvasToDisplay(canvas, aspect);
+            onResize();
+        };
+
+        const ro = new ResizeObserver(() => requestAnimationFrame(run));
+        ro.observe(container);
+        run();
+    };
+
+    observe(document.getElementById('canvas-1d'), 2, () => {
+        if (typeof draw1D === 'function') draw1D();
+    });
+
+    observe(document.getElementById('canvas-vectors'), 4 / 3, () => {
+        if (typeof layoutVectorsCanvas === 'function') layoutVectorsCanvas();
+        if (typeof drawVectors === 'function') drawVectors();
+    });
+
+    observe(document.getElementById('canvas-2d'), 4 / 3, () => {
+        if (typeof layout2DCanvas === 'function') layout2DCanvas();
+        if (typeof draw2DEnvironment === 'function') draw2DEnvironment();
+    });
+
+    graphIds.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) observe(el, GRAPH_ASPECT, refreshVisibleGraphCanvases);
+    });
+
+    ['guide-canvas-const', 'guide-canvas-linear', 'guide-canvas-quad'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) observe(el, 220 / 140, () => {
+            if (typeof drawGuideSamples === 'function') drawGuideSamples();
+        });
+    });
+}
