@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="1D motion, vectors, and projectile motion interactives">
+    <meta name="description" content="1D motion, vectors, projectile motion, and a math guide for equations, graphs, and derivations">
     <title>Linear Motion — Interactive Physics</title>
     
     <!-- Tailwind CSS -->
@@ -26,81 +26,146 @@
 
 <body class="text-slate-800 h-screen flex flex-col overflow-hidden">
 
-    <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-slate-200 z-10 shrink-0">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-blue-600 text-white rounded flex items-center justify-center font-bold text-xl">
-                    P
-                </div>
-                <h1 class="text-xl font-bold text-slate-800">Linear Motion</h1>
-            </div>
-            <nav class="flex space-x-1 sm:space-x-4 overflow-x-auto">
-                <button onclick="switchTab('1d')" id="tab-1d" class="tab-btn active px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 whitespace-nowrap">1D Motion</button>
-                <button onclick="switchTab('vectors')" id="tab-vectors" class="tab-btn px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 whitespace-nowrap">Vectors</button>
-                <button onclick="switchTab('2d')" id="tab-2d" class="tab-btn px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 whitespace-nowrap">2D Motion</button>
-            </nav>
-        </div>
-    </header>
+    <input type="checkbox" id="toggle-calculus" class="sr-only" tabindex="-1" aria-hidden="true">
 
     <!-- Main Content Area -->
-    <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50">
-        <div class="max-w-7xl mx-auto h-full">
+    <main class="lesson-main flex-1 overflow-y-auto min-h-0 p-2 sm:p-3 bg-slate-50">
+        <div class="page-shell h-full w-full">
 
             <!-- SECTION: 1D MOTION -->
             <div id="section-1d" class="section-container space-y-6" style="display: block;">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="sim-layout">
                     
                     <!-- Theory Panel -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1">
-                        <h2 class="text-2xl font-bold mb-4 text-blue-700">Motion in a Straight Line</h2>
-                        <p class="text-sm text-slate-600 mb-4">Kinematics equations for constant acceleration:</p>
-                        <div class="bg-slate-50 p-4 rounded-lg mb-4 text-sm overflow-x-auto">
+                    <aside class="sim-sidebar">
+                        <header class="sidebar-header">
+                            <h2>Motion in a Straight Line</h2>
+                            <p class="sidebar-lead">Constant acceleration — adjust sliders, then run the simulation.</p>
+                        </header>
+                        <div class="sidebar-controls sidebar-controls-top">
+                            <p class="sidebar-controls-title">Controls</p>
+                            <div class="control-row">
+                                <label>
+                                    <span>Initial velocity ($u$)</span>
+                                    <span id="val-1d-u" class="control-value">0 m/s</span>
+                                </label>
+                                <input type="range" id="slider-1d-u" min="-20" max="20" value="0" step="1" oninput="update1DInputs()">
+                            </div>
+                            <div class="control-row">
+                                <label>
+                                    <span>Acceleration ($a$)</span>
+                                    <span id="val-1d-a" class="control-value">2 m/s²</span>
+                                </label>
+                                <input type="range" id="slider-1d-a" min="-5" max="5" value="2" step="0.5" oninput="update1DInputs()">
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <button type="button" onclick="apply1DPreset(0, 2, true)" class="preset-btn">From rest</button>
+                                <button type="button" onclick="apply1DPreset(15, -3, true)" class="preset-btn">Braking</button>
+                                <button type="button" onclick="apply1DPreset(10, 0, true)" class="preset-btn">Constant speed</button>
+                            </div>
+                            <div class="sidebar-btn-row">
+                                <button type="button" onclick="start1D()" class="btn-action btn-action-primary">Start</button>
+                                <button type="button" onclick="togglePause1D()" id="btn-1d-pause" class="btn-action btn-action-secondary">Pause</button>
+                                <button type="button" onclick="reset1D()" class="btn-action btn-action-muted">Reset</button>
+                            </div>
+                            <button type="button" onclick="step1D()" class="btn-step">Step +0.1 s</button>
+                        </div>
+                        <div class="sidebar-scroll">
+                        <div class="sidebar-body">
+                        <details class="sidebar-fold" open>
+                            <summary class="sidebar-fold-title">Key equations</summary>
+                            <div class="sidebar-fold-inner">
+                        <div class="sidebar-eq-block text-sm overflow-x-auto">
                             $$ v = u + at $$
                             $$ s = ut + \frac{1}{2}at^2 $$
                             $$ v^2 = u^2 + 2as $$
                         </div>
-                        <p class="text-sm text-slate-600 mb-4">Where:<br>
-                            $u$ = initial velocity, $v$ = final velocity,<br>
-                            $a$ = acceleration, $t$ = time, $s$ = displacement.
-                        </p>
-                        
-                        <div class="space-y-4 border-t pt-4">
-                            <h3 class="font-semibold text-slate-800">Controls</h3>
-                            <div>
-                                <label class="flex justify-between text-sm text-slate-600">
-                                    <span>Initial Velocity ($u$)</span> <span id="val-1d-u" class="font-mono text-blue-600">0 m/s</span>
-                                </label>
-                                <input type="range" id="slider-1d-u" min="-20" max="20" value="0" step="1" oninput="update1DInputs()">
-                            </div>
-                            <div>
-                                <label class="flex justify-between text-sm text-slate-600">
-                                    <span>Acceleration ($a$)</span> <span id="val-1d-a" class="font-mono text-blue-600">2 m/s²</span>
-                                </label>
-                                <input type="range" id="slider-1d-a" min="-5" max="5" value="2" step="0.5" oninput="update1DInputs()">
-                            </div>
-                            <div class="flex gap-2 pt-2">
-                                <button onclick="start1D()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition">Start</button>
-                                <button onclick="reset1D()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-2 rounded-lg font-medium transition">Reset</button>
-                            </div>
+                        <div class="sidebar-vars">
+                            <span class="sidebar-var-chip">$u$ initial velocity</span>
+                            <span class="sidebar-var-chip">$v$ final velocity</span>
+                            <span class="sidebar-var-chip">$a$ acceleration</span>
+                            <span class="sidebar-var-chip">$t$ time</span>
+                            <span class="sidebar-var-chip">$s$ displacement</span>
                         </div>
-                    </div>
+                            </div>
+                        </details>
+                        <details class="sidebar-fold">
+                            <summary class="sidebar-fold-title">Math connection</summary>
+                            <div class="sidebar-fold-inner math-connection">
+                            <div class="math-map overflow-x-auto" data-static-math>
+                                <table>
+                                    <thead>
+                                        <tr><th>Graph</th><th>Equation</th><th>Type</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>v–t</td><td>$v = u + at$</td><td><span class="eq-badge eq-badge-linear">Linear</span></td></tr>
+                                        <tr><td>s–t</td><td>$s = ut + \frac{1}{2}at^2$</td><td><span class="eq-badge eq-badge-quadratic">Quadratic</span></td></tr>
+                                        <tr><td>a–t</td><td>$a = \text{const}$</td><td><span class="eq-badge eq-badge-constant">Constant</span></td></tr>
+                                    </tbody>
+                                </table>
+                                <p class="mt-2 text-slate-500">On v–t, slope = $a$. On s–t, a parabola when $a \neq 0$.</p>
+                            </div>
+                            <div class="calculus-layer calculus-hidden">
+                                <p class="font-semibold mb-1">Calculus</p>
+                                <p>$v = \dfrac{ds}{dt}$, &nbsp; $a = \dfrac{dv}{dt}$</p>
+                                <p class="mt-1">$s(t) = \int_0^t v(\tau)\,d\tau$ — area under the v–t curve</p>
+                                <p id="live-1d-calculus" class="mt-2 font-mono text-xs text-violet-900"></p>
+                            </div>
+                            </div>
+                        </details>
+                        </div>
+
+                        <div class="panel-live border sidebar-live sidebar-live-footer text-xs font-mono space-y-1">
+                            <p id="live-1d-at-t" class="live-at-t">At t = 0.00 s</p>
+                            <p class="font-semibold panel-live-title mb-1">Substitute your values</p>
+                            <p id="live-formula-v" class="panel-live-formula">v = u + at → 0 = 0 + (2)(0)</p>
+                            <p id="live-formula-s" class="panel-live-formula">s = ut + ½at² → 0 = (0)(0) + ½(2)(0)²</p>
+                            <p id="live-formula-v2" class="panel-live-formula">v² = u² + 2as → 0 = 0 + 2(2)(0)</p>
+                            <p id="live-1d-graph-hint" class="panel-live-hint">On v–t: slope ≈ 2 m/s²</p>
+                        </div>
+                        </div>
+                    </aside>
 
                     <!-- Simulation Panel -->
-                    <div class="lg:col-span-2 flex flex-col gap-4">
+                    <div class="sim-main sim-main-grow flex flex-col gap-4 min-w-0">
                         <div class="canvas-container bg-slate-900 border-none relative">
-                            <!-- Canvas logical size is fixed, CSS scales it perfectly to prevent mouse/crop issues -->
                             <canvas id="canvas-1d" width="800" height="400" class="w-full h-auto block"></canvas>
                             
-                            <!-- Realtime Stats Overlay -->
                             <div class="absolute top-4 left-4 bg-black/60 text-white p-3 rounded text-sm font-mono backdrop-blur-sm">
                                 <div>Time (t): <span id="stat-1d-t" class="text-green-400">0.00</span> s</div>
-                                <div>Pos (s): <span id="stat-1d-s" class="text-blue-400">0.00</span> m</div>
+                                <div>Pos (s): <span id="stat-1d-s" class="text-primary-light">0.00</span> m</div>
                                 <div>Vel (v): <span id="stat-1d-v" class="text-red-400">0.00</span> m/s</div>
+                                <div>Accel (a): <span id="stat-1d-a" class="text-emerald-400">2.00</span> m/s²</div>
+                                <div id="stat-1d-braking" class="text-orange-300 hidden mt-1">⚠ Braking (retardation)</div>
                             </div>
                         </div>
+
+                        <div class="graph-row grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div class="graph-panel">
+                                <div class="graph-label-row">
+                                    <p class="graph-label mb-0">Displacement s–t</p>
+                                    <span class="eq-badge eq-badge-quadratic">Quadratic</span>
+                                </div>
+                                <canvas id="graph-st" width="260" height="160" class="w-full h-auto block"></canvas>
+                            </div>
+                            <div class="graph-panel">
+                                <div class="graph-label-row">
+                                    <p class="graph-label mb-0">Velocity v–t</p>
+                                    <span class="eq-badge eq-badge-linear">Linear</span>
+                                </div>
+                                <canvas id="graph-vt" width="260" height="160" class="w-full h-auto block"></canvas>
+                            </div>
+                            <div class="graph-panel">
+                                <div class="graph-label-row">
+                                    <p class="graph-label mb-0">Acceleration a–t</p>
+                                    <span class="eq-badge eq-badge-constant">Constant</span>
+                                </div>
+                                <canvas id="graph-at" width="260" height="160" class="w-full h-auto block"></canvas>
+                            </div>
+                        </div>
+
                         <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-sm text-slate-600">
-                            <strong>Note:</strong> Observe how acceleration changes the rate at which the block's velocity increases. If acceleration is negative relative to velocity, it acts as retardation (braking).
+                            <strong>Tip:</strong> Red arrow = velocity, green = acceleration. The dashed vertical line on each graph marks the current time. Use <em>Pause</em> and <em>Step</em> to explore motion point by point.
                         </div>
                     </div>
 
@@ -109,47 +174,94 @@
 
             <!-- SECTION: VECTORS -->
             <div id="section-vectors" class="section-container space-y-6" style="display: none;">
-                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                 <div class="sim-layout">
                     
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1">
-                        <h2 class="text-2xl font-bold mb-4 text-blue-700">Vector Addition</h2>
-                        <p class="text-sm text-slate-600 mb-4">Resultant of two vectors $\vec{A}$ and $\vec{B}$:</p>
-                        <div class="bg-slate-50 p-4 rounded-lg mb-4 text-sm overflow-x-auto">
-                            $$ \vec{R} = \vec{A} + \vec{B} $$
-                            $$ |\vec{R}| = \sqrt{A^2 + B^2 + 2AB\cos\theta} $$
-                        </div>
-                        <p class="text-sm text-slate-600 mb-4">
-                            Drag the tips of Vector <span class="text-blue-600 font-bold">A</span> and Vector <span class="text-red-600 font-bold">B</span> on the grid to see their resultant <span class="text-green-600 font-bold">R</span>.
-                        </p>
-                        
-                        <div class="space-y-3 border-t pt-4 text-sm font-mono bg-slate-50 p-4 rounded">
+                    <aside class="sim-sidebar">
+                        <header class="sidebar-header">
+                            <h2>Vector Addition</h2>
+                            <p class="sidebar-lead">Drag vector tips on the canvas. Components update live below.</p>
+                        </header>
+                        <div class="sidebar-controls sidebar-controls-top">
+                            <p class="sidebar-controls-title">Display</p>
+                            <label class="sidebar-check">
+                                <input type="checkbox" id="vec-show-parallelogram" checked onchange="drawVectors()" class="rounded border-slate-300">
+                                Show parallelogram
+                            </label>
+                            <p class="sidebar-controls-title">Readout</p>
+                            <div class="vec-readout">
                             <div class="flex justify-between">
-                                <span class="text-blue-600 font-bold">Vector A:</span>
+                                <span class="text-primary font-bold">Vector A:</span>
                                 <span id="vec-a-val">0i + 0j</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-slate-500">
+                                <span>|A|, θ_A:</span>
+                                <span id="vec-a-mag-ang">0.00, 0.0°</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-red-600 font-bold">Vector B:</span>
                                 <span id="vec-b-val">0i + 0j</span>
                             </div>
-                            <hr class="border-slate-300">
+                            <div class="flex justify-between text-xs text-slate-500">
+                                <span>|B|, θ_B:</span>
+                                <span id="vec-b-mag-ang">0.00, 0.0°</span>
+                            </div>
+                            <hr>
                             <div class="flex justify-between font-bold">
                                 <span class="text-green-600">Resultant R:</span>
                                 <span id="vec-r-val">0i + 0j</span>
                             </div>
-                            <div class="flex justify-between pt-2">
-                                <span class="text-slate-600 text-xs">Magnitude |R|:</span>
+                            <div class="flex justify-between pt-1">
+                                <span class="text-slate-600 text-xs">|R|:</span>
                                 <span id="vec-r-mag" class="text-xs">0.00</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-slate-600 text-xs">Angle ($\theta$ from x-axis):</span>
+                                <span class="text-slate-600 text-xs">θ_R:</span>
                                 <span id="vec-r-ang" class="text-xs">0.00°</span>
                             </div>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="lg:col-span-2">
+                        <div class="sidebar-scroll">
+                        <div class="sidebar-body">
+                        <details class="sidebar-fold" open>
+                            <summary class="sidebar-fold-title">Key equations</summary>
+                            <div class="sidebar-fold-inner">
+                        <div class="sidebar-eq-block text-sm overflow-x-auto">
+                            $$ \vec{R} = \vec{A} + \vec{B} $$
+                            $$ |\vec{R}| = \sqrt{A^2 + B^2 + 2AB\cos\theta} $$
+                        </div>
+                        <p class="text-xs text-slate-500 mt-2">Drag <span class="text-primary font-bold">A</span> and <span class="text-red-600 font-bold">B</span>; dashed lines show axis components.</p>
+                            </div>
+                        </details>
+                        <details class="sidebar-fold">
+                            <summary class="sidebar-fold-title">Math connection</summary>
+                            <div class="sidebar-fold-inner math-connection">
+                            <div class="math-map overflow-x-auto" data-static-math>
+                                <p>Component form (linear in components):</p>
+                                <p class="my-1">$\vec{R} = (A_x + B_x)\hat{i} + (A_y + B_y)\hat{j}$</p>
+                                <p class="mt-2">Magnitude: $|\vec{R}| = \sqrt{R_x^2 + R_y^2}$</p>
+                            </div>
+                            <div class="calculus-layer calculus-hidden">
+                                <p class="font-semibold mb-1">Calculus</p>
+                                <p>$\vec{v} = \dfrac{d\vec{r}}{dt}$</p>
+                                <p class="mt-1">Component addition is <strong>linear</strong>; $|R|$ uses squares.</p>
+                            </div>
+                            </div>
+                        </details>
+                        </div>
+                        <div class="panel-live border sidebar-live sidebar-live-footer text-xs font-mono space-y-1">
+                            <p class="font-semibold panel-live-title mb-1">Substitute components</p>
+                            <p id="live-vec-rx" class="panel-live-formula">R_x = A_x + B_x → …</p>
+                            <p id="live-vec-ry" class="panel-live-formula">R_y = A_y + B_y → …</p>
+                            <p id="live-vec-cos" class="panel-live-formula panel-live-hint">Angle between A and B: …</p>
+                        </div>
+                        </div>
+                    </aside>
+                    <div class="sim-main sim-main-grow flex flex-col gap-4 min-w-0">
                         <div class="canvas-container bg-slate-50 cursor-crosshair relative" style="touch-action: none;">
                             <canvas id="canvas-vectors" width="800" height="600" class="w-full h-auto block"></canvas>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-sm text-slate-600">
+                            <strong>Tip:</strong> Blue and red dashed lines project each vector onto the x- and y-axes. The green vector R is the diagonal of the parallelogram (or the closing side of the triangle).
                         </div>
                     </div>
 
@@ -158,51 +270,318 @@
 
             <!-- SECTION: 2D MOTION -->
             <div id="section-2d" class="section-container space-y-6" style="display: none;">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="sim-layout">
                     
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1">
-                        <h2 class="text-2xl font-bold mb-4 text-blue-700">Projectile Motion</h2>
-                        <p class="text-sm text-slate-600 mb-2">Formulas for a projectile fired at angle $\theta$ with velocity $u$:</p>
-                        <div class="bg-slate-50 p-3 rounded-lg mb-4 text-xs overflow-x-auto space-y-2">
-                            <div>Time of Flight: $$ T = \frac{2u \sin\theta}{g} $$</div>
-                            <div>Max Height: $$ H = \frac{u^2 \sin^2\theta}{2g} $$</div>
-                            <div>Range: $$ R = \frac{u^2 \sin(2\theta)}{g} $$</div>
-                        </div>
-                        
-                        <div class="space-y-4 border-t pt-4">
-                            <h3 class="font-semibold text-slate-800">Parameters</h3>
-                            <div>
-                                <label class="flex justify-between text-sm text-slate-600">
-                                    <span>Velocity ($u$)</span> <span id="val-2d-u" class="font-mono text-blue-600">40 m/s</span>
+                    <aside class="sim-sidebar">
+                        <header class="sidebar-header">
+                            <h2>Projectile Motion</h2>
+                            <p class="sidebar-lead">Set speed and angle, then fire. Compare live values to theory.</p>
+                        </header>
+                        <div class="sidebar-controls sidebar-controls-top">
+                            <p class="sidebar-controls-title">Parameters</p>
+                            <div class="control-row">
+                                <label>
+                                    <span>Velocity ($u$)</span>
+                                    <span id="val-2d-u" class="control-value">40 m/s</span>
                                 </label>
                                 <input type="range" id="slider-2d-u" min="10" max="80" value="40" step="1" oninput="update2DInputs()">
                             </div>
-                            <div>
-                                <label class="flex justify-between text-sm text-slate-600">
-                                    <span>Angle ($\theta$)</span> <span id="val-2d-ang" class="font-mono text-blue-600">45°</span>
+                            <div class="control-row">
+                                <label>
+                                    <span>Angle ($\theta$)</span>
+                                    <span id="val-2d-ang" class="control-value">45°</span>
                                 </label>
                                 <input type="range" id="slider-2d-ang" min="0" max="90" value="45" step="1" oninput="update2DInputs()">
                             </div>
-                            <div class="flex gap-2 pt-2">
-                                <button onclick="fireProjectile()" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-medium transition shadow-sm shadow-red-500/30">Fire Cannon</button>
-                                <button onclick="clearProjectiles()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-2 rounded-lg font-medium transition">Clear</button>
+                            <div class="sidebar-btn-row">
+                                <button type="button" onclick="fireProjectile()" class="btn-action btn-action-danger">Fire</button>
+                                <button type="button" onclick="clearProjectiles()" class="btn-action btn-action-muted">Clear</button>
+                            </div>
+                            <div class="theo-results">
+                            <h4>Theoretical results</h4>
+                            <div class="theo-row"><span>Max height</span> <span id="theo-h" class="font-mono">--</span></div>
+                            <div class="theo-row"><span>Range</span> <span id="theo-r" class="font-mono">--</span></div>
+                            <div class="theo-row"><span>Time</span> <span id="theo-t" class="font-mono">--</span></div>
+                            </div>
+                        </div>
+                        <div class="sidebar-scroll">
+                        <div class="sidebar-body">
+                        <details class="sidebar-fold" open>
+                            <summary class="sidebar-fold-title">Key equations</summary>
+                            <div class="sidebar-fold-inner">
+                        <div class="sidebar-eq-block text-xs overflow-x-auto space-y-2">
+                            <div>Time of flight: $$ T = \frac{2u \sin\theta}{g} $$</div>
+                            <div>Max height: $$ H = \frac{u^2 \sin^2\theta}{2g} $$</div>
+                            <div>Range: $$ R = \frac{u^2 \sin(2\theta)}{g} $$</div>
+                        </div>
+                            </div>
+                        </details>
+                        <details class="sidebar-fold">
+                            <summary class="sidebar-fold-title">Math connection</summary>
+                            <div class="sidebar-fold-inner math-connection">
+                            <div class="math-map overflow-x-auto" data-static-math>
+                                <table>
+                                    <thead>
+                                        <tr><th>Quantity</th><th>Equation</th><th>Type</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>$x(t)$</td><td>$x = (u\cos\theta)\,t$</td><td><span class="eq-badge eq-badge-linear">Linear</span></td></tr>
+                                        <tr><td>$y(t)$</td><td>$y = (u\sin\theta)\,t - \frac{1}{2}gt^2$</td><td><span class="eq-badge eq-badge-quadratic">Quadratic</span></td></tr>
+                                        <tr><td>$v_y(t)$</td><td>$v_y = u\sin\theta - gt$</td><td><span class="eq-badge eq-badge-linear">Linear</span></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="calculus-layer calculus-hidden">
+                                <p class="font-semibold mb-1">Calculus</p>
+                                <p>$\vec{r}(t) = x(t)\hat{i} + y(t)\hat{j}$</p>
+                                <p class="mt-1">$\dfrac{dy}{dt} = v_y$, $\dfrac{d^2y}{dt^2} = -g$</p>
+                                <p id="live-2d-calculus" class="mt-2 font-mono text-xs text-violet-900"></p>
+                            </div>
+                            </div>
+                        </details>
+                        </div>
+                        <div class="panel-live border sidebar-live sidebar-live-footer text-xs font-mono space-y-1">
+                            <p id="live-2d-at-t" class="live-at-t">At t = 0.00 s (preview)</p>
+                            <p class="font-semibold panel-live-title mb-1">Substitute your values</p>
+                            <p id="live-2d-x" class="panel-live-formula">x = (u cos θ)t → …</p>
+                            <p id="live-2d-y" class="panel-live-formula">y = (u sin θ)t − ½gt² → …</p>
+                            <p id="live-2d-vy" class="panel-live-formula">v_y = u sin θ − gt → …</p>
+                            <p id="live-2d-range-check" class="panel-live-hint">Range check: …</p>
+                        </div>
+                        </div>
+                    </aside>
+                    <div class="sim-main sim-main-grow flex flex-col gap-4 min-w-0">
+                        <div class="canvas-container bg-sky-100 relative">
+                            <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle, #000 1px, transparent 1px); background-size: 20px 20px;"></div>
+                            <canvas id="canvas-2d" width="800" height="600" class="w-full h-auto block relative z-10"></canvas>
+                            <div id="overlay-2d" class="absolute top-4 right-4 bg-black/60 text-white p-3 rounded text-sm font-mono backdrop-blur-sm z-20 hidden">
+                                <div>t: <span id="stat-2d-t" class="text-green-400">0.00</span> s</div>
+                                <div>x: <span id="stat-2d-x" class="text-primary-light">0.00</span> m</div>
+                                <div>y: <span id="stat-2d-y" class="text-primary-light">0.00</span> m</div>
+                                <div>v_x: <span id="stat-2d-vx" class="text-sky-300">0.00</span> m/s</div>
+                                <div>v_y: <span id="stat-2d-vy" class="text-red-400">0.00</span> m/s</div>
+                            </div>
+                        </div>
+                        <div class="graph-row grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div class="graph-panel">
+                                <div class="graph-label-row">
+                                    <p class="graph-label mb-0">Height y–t</p>
+                                    <span class="eq-badge eq-badge-quadratic">Quadratic</span>
+                                </div>
+                                <canvas id="graph-2d-yt" width="260" height="160" class="w-full h-auto block"></canvas>
+                            </div>
+                            <div class="graph-panel">
+                                <div class="graph-label-row">
+                                    <p class="graph-label mb-0">Range x–t</p>
+                                    <span class="eq-badge eq-badge-linear">Linear</span>
+                                </div>
+                                <canvas id="graph-2d-xt" width="260" height="160" class="w-full h-auto block"></canvas>
+                            </div>
+                            <div class="graph-panel">
+                                <div class="graph-label-row">
+                                    <p class="graph-label mb-0">Vertical v_y–t</p>
+                                    <span class="eq-badge eq-badge-linear">Linear</span>
+                                </div>
+                                <canvas id="graph-2d-vyt" width="260" height="160" class="w-full h-auto block"></canvas>
                             </div>
                         </div>
 
-                        <div class="mt-4 p-4 bg-indigo-50 rounded-lg text-sm">
-                            <h4 class="font-bold text-indigo-800 mb-2">Theoretical Results:</h4>
-                            <div class="flex justify-between"><span class="text-indigo-600">Max Height:</span> <span id="theo-h" class="font-mono">--</span></div>
-                            <div class="flex justify-between"><span class="text-indigo-600">Range:</span> <span id="theo-r" class="font-mono">--</span></div>
-                            <div class="flex justify-between"><span class="text-indigo-600">Time:</span> <span id="theo-t" class="font-mono">--</span></div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-sm text-slate-600">
+                            <strong>Tip:</strong> Graphs track the latest shot (or the predicted path before you fire). y–t is a parabola; x–t is linear; v_y–t decreases at slope −g. v_x stays constant (not shown).
                         </div>
                     </div>
 
-                    <div class="lg:col-span-2">
-                        <div class="canvas-container bg-sky-100 relative">
-                            <!-- Grid background for sky -->
-                            <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle, #000 1px, transparent 1px); background-size: 20px 20px;"></div>
-                            <canvas id="canvas-2d" width="800" height="600" class="w-full h-auto block relative z-10"></canvas>
+                </div>
+            </div>
+
+            <!-- SECTION: MATH GUIDE -->
+            <div id="section-guide" class="section-container space-y-6" style="display: none;">
+                <div class="guide-page w-full space-y-6" data-static-math>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 guide-span-full">
+                        <h2 class="text-2xl font-bold mb-2 text-primary">Equations, graphs &amp; derivations</h2>
+                        <p class="text-sm text-slate-600">Learn how to <strong>recognise</strong> linear, quadratic, and constant relationships from equations and graphs — then practise on the simulation tabs.</p>
+                    </div>
+
+                    <div class="guide-card">
+                        <h3 class="guide-heading">1. Identify from the equation</h3>
+                        <p class="guide-text">Look at the highest power of time $t$ (or the variable on the horizontal axis).</p>
+                        <div class="overflow-x-auto">
+                            <table class="guide-table">
+                                <thead>
+                                    <tr><th>Form</th><th>Example (physics)</th><th>Nature</th><th>Graph (y vs t)</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>$y = c$</td>
+                                        <td>$a = \text{const}$ on a–t</td>
+                                        <td><span class="eq-badge eq-badge-constant">Constant</span></td>
+                                        <td>Horizontal line</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$y = mt + c$</td>
+                                        <td>$v = u + at$, $x = (u\cos\theta)t$</td>
+                                        <td><span class="eq-badge eq-badge-linear">Linear</span></td>
+                                        <td>Straight sloped line</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$y = at^2 + bt + c$</td>
+                                        <td>$s = ut + \frac{1}{2}at^2$</td>
+                                        <td><span class="eq-badge eq-badge-quadratic">Quadratic</span></td>
+                                        <td>Parabola</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$\sqrt{R_x^2 + R_y^2}$</td>
+                                        <td>$|\vec{R}|$</td>
+                                        <td>Nonlinear (not vs $t$)</td>
+                                        <td>—</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
+                        <p class="guide-tip"><strong>Tip:</strong> “Linear in $t$” means $t$ appears only to the first power. If $t^2$ appears, the graph vs $t$ is usually a parabola.</p>
+                    </div>
+
+                    <div class="guide-card">
+                        <h3 class="guide-heading">2. Identify from the graph</h3>
+                        <p class="guide-text mb-4">Match the shape to the type. Same idea for $s$–$t$, $v$–$t$, $x$–$t$, etc.</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="guide-sample">
+                                <div class="graph-label-row">
+                                    <span class="text-xs font-semibold text-slate-600">Sample A</span>
+                                    <span class="eq-badge eq-badge-constant" id="guide-badge-a">?</span>
+                                </div>
+                                <canvas id="guide-canvas-const" width="220" height="140" class="w-full h-auto block rounded border border-slate-200"></canvas>
+                            </div>
+                            <div class="guide-sample">
+                                <div class="graph-label-row">
+                                    <span class="text-xs font-semibold text-slate-600">Sample B</span>
+                                    <span class="eq-badge eq-badge-linear" id="guide-badge-b">?</span>
+                                </div>
+                                <canvas id="guide-canvas-linear" width="220" height="140" class="w-full h-auto block rounded border border-slate-200"></canvas>
+                            </div>
+                            <div class="guide-sample">
+                                <div class="graph-label-row">
+                                    <span class="text-xs font-semibold text-slate-600">Sample C</span>
+                                    <span class="eq-badge eq-badge-quadratic" id="guide-badge-c">?</span>
+                                </div>
+                                <canvas id="guide-canvas-quad" width="220" height="140" class="w-full h-auto block rounded border border-slate-200"></canvas>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                            <p class="text-sm font-semibold text-slate-700 mb-2">Quick check — what type is each sample?</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                                <div>
+                                    <label class="text-slate-600 block mb-1">Sample A</label>
+                                    <select id="guide-quiz-a" class="guide-select w-full" onchange="checkGuideQuiz()">
+                                        <option value="">Choose…</option>
+                                        <option value="constant">Constant</option>
+                                        <option value="linear">Linear</option>
+                                        <option value="quadratic">Quadratic</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-slate-600 block mb-1">Sample B</label>
+                                    <select id="guide-quiz-b" class="guide-select w-full" onchange="checkGuideQuiz()">
+                                        <option value="">Choose…</option>
+                                        <option value="constant">Constant</option>
+                                        <option value="linear">Linear</option>
+                                        <option value="quadratic">Quadratic</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-slate-600 block mb-1">Sample C</label>
+                                    <select id="guide-quiz-c" class="guide-select w-full" onchange="checkGuideQuiz()">
+                                        <option value="">Choose…</option>
+                                        <option value="constant">Constant</option>
+                                        <option value="linear">Linear</option>
+                                        <option value="quadratic">Quadratic</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <p id="guide-quiz-feedback" class="mt-3 text-sm font-medium"></p>
+                            <button type="button" onclick="revealGuideAnswers()" class="mt-2 text-xs text-primary hover:underline">Reveal answers</button>
+                        </div>
+                    </div>
+
+                    <div class="guide-card guide-span-full">
+                        <h3 class="guide-heading">3. Graph chain (constant acceleration, 1D)</h3>
+                        <p class="guide-text">From constant $a$, each graph links to the next by slope or area.</p>
+                        <div class="guide-chain overflow-x-auto text-sm">
+                            <div class="guide-chain-step">
+                                <span class="eq-badge eq-badge-constant">a–t</span>
+                                <p>$a$ flat</p>
+                            </div>
+                            <span class="guide-chain-arrow">↓ slope</span>
+                            <div class="guide-chain-step">
+                                <span class="eq-badge eq-badge-linear">v–t</span>
+                                <p>$v = u + at$</p>
+                            </div>
+                            <span class="guide-chain-arrow">↓ area</span>
+                            <div class="guide-chain-step">
+                                <span class="eq-badge eq-badge-quadratic">s–t</span>
+                                <p>$s = ut + \frac{1}{2}at^2$</p>
+                            </div>
+                        </div>
+                        <p class="guide-tip calculus-layer calculus-hidden">$a = \dfrac{dv}{dt}$, $v = \dfrac{ds}{dt}$, $s = \int_0^t v\,d\tau$.</p>
+                    </div>
+
+                    <div class="guide-card guide-span-full">
+                        <h3 class="guide-heading">4. Projectile: two equations</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div class="p-3 bg-blue-50 rounded-lg border border-blue-100">
+                                <span class="eq-badge eq-badge-linear">Linear in t</span>
+                                <p class="mt-2">$x = (u\cos\theta)\,t$, &nbsp; $v_x = u\cos\theta$</p>
+                            </div>
+                            <div class="p-3 bg-pink-50 rounded-lg border border-pink-100">
+                                <span class="eq-badge eq-badge-quadratic">Quadratic in t</span>
+                                <p class="mt-2">$y = (u\sin\theta)\,t - \frac{1}{2}gt^2$</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="guide-card guide-span-full">
+                        <h3 class="guide-heading">5. Derivations</h3>
+                        <p class="guide-text mb-3">Constant $a$. Expand each card for steps.</p>
+
+                        <details class="derivation-block">
+                            <summary>$v = u + at$</summary>
+                            <div class="derivation-body">
+                                <p>$a = \dfrac{dv}{dt}$ → integrate: $\displaystyle\int_u^v dv = \int_0^t a\,dt$</p>
+                                <p>$$ v - u = at \quad \Rightarrow \quad \boxed{v = u + at} $$</p>
+                            </div>
+                        </details>
+
+                        <details class="derivation-block">
+                            <summary>$s = ut + \frac{1}{2}at^2$</summary>
+                            <div class="derivation-body">
+                                <p>Integrate $v = u + at$: $\displaystyle s = \int_0^t (u + at)\,dt = ut + \frac{1}{2}at^2$</p>
+                                <p>Or use average velocity $\bar{v} = \frac{u+v}{2}$ with $s = \bar{v}\,t$.</p>
+                            </div>
+                        </details>
+
+                        <details class="derivation-block">
+                            <summary>$v^2 = u^2 + 2as$</summary>
+                            <div class="derivation-body">
+                                <p>Eliminate $t$ from $v = u + at$ and $s = ut + \frac{1}{2}at^2$ to get $\boxed{v^2 = u^2 + 2as}$.</p>
+                            </div>
+                        </details>
+
+                        <details class="derivation-block calculus-layer calculus-hidden">
+                            <summary>Range $R = \dfrac{u^2\sin 2\theta}{g}$</summary>
+                            <div class="derivation-body">
+                                <p>$T = \dfrac{2u\sin\theta}{g}$, &nbsp; $R = v_x T = (u\cos\theta)T$, use $2\sin\theta\cos\theta = \sin 2\theta$.</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="guide-card guide-span-full bg-teal-50 border-teal-100">
+                        <h3 class="guide-heading text-teal-900">Practise in the simulators</h3>
+                        <ul class="guide-text list-disc pl-5 space-y-1">
+                            <li><button type="button" onclick="switchTab('1d')" class="text-primary font-medium hover:underline">1D Motion</button> — s–t, v–t, live substitution</li>
+                            <li><button type="button" onclick="switchTab('vectors')" class="text-primary font-medium hover:underline">Vectors</button> — components vs magnitude</li>
+                            <li><button type="button" onclick="switchTab('2d')" class="text-primary font-medium hover:underline">2D Motion</button> — linear $x(t)$, quadratic $y(t)$</li>
+                        </ul>
                     </div>
 
                 </div>
@@ -211,6 +590,46 @@
         </div>
     </main>
 
-    <script src="script.js"></script>
+    <a href="../../index.html" class="lesson-home-link" title="Back to ExaAnim" aria-label="Back to ExaAnim">←</a>
+
+    <button type="button" class="fab-backdrop" id="fab-backdrop" aria-hidden="true" tabindex="-1"></button>
+    <nav class="fab-nav" id="fab-nav" aria-label="Lesson sections">
+        <div class="fab-menu" id="fab-menu" role="menu" aria-hidden="true">
+            <button type="button" class="fab-item" data-tab="1d" role="menuitem" aria-current="true">
+                <span class="fab-item-short">1D</span>
+                <span class="fab-item-long">1D Motion</span>
+            </button>
+            <button type="button" class="fab-item" data-tab="vectors" role="menuitem">
+                <span class="fab-item-short">Vec</span>
+                <span class="fab-item-long">Vectors</span>
+            </button>
+            <button type="button" class="fab-item" data-tab="2d" role="menuitem">
+                <span class="fab-item-short">2D</span>
+                <span class="fab-item-long">2D Motion</span>
+            </button>
+            <button type="button" class="fab-item" data-tab="guide" role="menuitem">
+                <span class="fab-item-short">Guide</span>
+                <span class="fab-item-long">Math Guide</span>
+            </button>
+            <button type="button" class="fab-item fab-item-calc" id="fab-calculus" role="menuitem" aria-pressed="false" title="Show calculus">
+                <span class="fab-item-short">∫</span>
+                <span class="fab-item-long">Calculus</span>
+            </button>
+        </div>
+        <button type="button" class="fab-hub" id="fab-hub" aria-expanded="false" aria-controls="fab-menu" aria-haspopup="menu">
+            <span class="fab-hub-icon" aria-hidden="true">☰</span>
+            <span id="fab-hub-label">1D</span>
+        </button>
+    </nav>
+
+
+    <script src="js/shared.js"></script>
+    <script src="js/math-panel.js"></script>
+    <script src="js/motion-1d.js"></script>
+    <script src="js/vectors.js"></script>
+    <script src="js/motion-2d.js"></script>
+    <script src="js/math-guide.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/fab-nav.js"></script>
 </body>
 </html>
